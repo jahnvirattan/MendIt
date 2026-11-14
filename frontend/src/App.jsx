@@ -1,10 +1,11 @@
-
 import "./App.css";
-import StudentLogin from "./Pages/StudentLogin";
-import StudentDashboard from "./Pages/StudentDashboard";
-import SubmitComplaint from "./Pages/Student/SubmitComplaint";
-import AllComplaints from "./Pages/Admin/AllComplaints";
-import ComplaintDetails from "./Pages/Admin/ComplaintDetails";
+import StudentLogin from "./pages/StudentLogin";
+import StudentDashboard from "./pages/StudentDashboard";
+import SubmitComplaint from "./pages/student/SubmitComplaint";
+import AllComplaints from "./pages/Admin/AllComplaints";
+import ComplaintDetails from "./pages/Admin/ComplaintDetails";
+import AdminDashboard from "./pages/Admin/AdminDashboard";
+
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
           <Route path="/studentLogin" element={<StudentLogin />} />
           <Route path="/studentDashboard" element={<StudentDashboard />} />
           <Route path="/submitComplaint" element={<SubmitComplaint />} />
+          <Route path="/adminDashboard" element={<AdminDashboard />} />
 
           {/* Admin Pages */}
           <Route
