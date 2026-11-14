@@ -6,6 +6,7 @@ import AdminDashboard from "./pages/Admin/AdminDashboard";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import StudentDashboard from "./pages/StudentDashboard";
+import MyComplaints from "./pages/student/MyComplaints";
 
 import Register from "./pages/Register";
 function App() {
@@ -20,6 +21,7 @@ function App() {
           {/* <Route element={<ProtectedRoutes />}> */}
           <Route path="/studentDashboard" element={<StudentDashboard />} />
           <Route path="/submitComplaint" element={<SubmitComplaint />} />
+          <Route path="/myComplaints" element={<MyComplaints />} />
           <Route path="/adminDashboard" element={<AdminDashboard />} />
           {/* Admin Pages */}
           <Route path="/admin/complaints" element={<AllComplaints />} />
