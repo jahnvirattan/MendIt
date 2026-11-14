@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import StudentDashboard from "./pages/StudentDashboard";
 import MyComplaints from "./pages/student/MyComplaints";
+import StudentProfile from "./pages/student/StudentProfile";
 
 import Register from "./pages/Register";
 function App() {
@@ -23,6 +24,7 @@ function App() {
           <Route path="/submitComplaint" element={<SubmitComplaint />} />
           <Route path="/myComplaints" element={<MyComplaints />} />
           <Route path="/adminDashboard" element={<AdminDashboard />} />
+          <Route path="/student/profile" element={<StudentProfile />} />
           {/* Admin Pages */}
           <Route path="/admin/complaints" element={<AllComplaints />} />
           <Route path="/admin/complaints/:id" element={<ComplaintDetails />} />
