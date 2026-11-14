@@ -1,12 +1,12 @@
 /* Main Dashboard */
 
 .student-dashboard {
-  /* min-height: 100vh;
-  padding: 35px 40px; */
-  background: #f4f6fc;
+  min-height: 100vh;
+  padding: 32px 38px;
+  background: #f9f6ed;
   font-family: "Inter", "Segoe UI", sans-serif;
-  color: #172554;
-  /* box-sizing: border-box; */
+  color: #192b55;
+  box-sizing: border-box;
   width: 100%;
   max-width: none;
   flex: 1;
@@ -18,14 +18,14 @@
 .dashboard-hero {
   position: relative;
   min-height: 300px;
-  padding: 45px 55px;
-  background: linear-gradient(115deg, #102c78, #2149a5, #315cc0);
+  padding: 42px 48px;
+  background: linear-gradient(115deg, #192b55, #2546a8, #5279d8);
   border-radius: 22px;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 0 12px 30px rgba(22, 53, 125, 0.16);
+  box-shadow: 0 12px 30px rgba(25, 43, 85, 0.16);
 }
 
 .hero-content {
@@ -36,7 +36,7 @@
 
 .hero-label {
   display: inline-block;
-  color: #f6d77a;
+  color: #f0d98d;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 2px;
@@ -47,24 +47,24 @@
   font-size: 38px;
   line-height: 1.25;
   font-weight: 750;
-  color: #ffffff;
+  color: #fffdf7;
   margin: 0 0 14px;
 }
 
 .hero-content h1 span {
-  color: #f5d477;
+  color: #f0d98d;
 }
 
 .hero-content p {
-  color: #dbe5ff;
+  color: #dce7fa;
   font-size: 15px;
   line-height: 1.7;
   margin-bottom: 25px;
 }
 
 .hero-button {
-  background: #f2cf69;
-  color: #172e70;
+  background: #f0d98d;
+  color: #192b55;
   border: none;
   padding: 13px 23px;
   border-radius: 9px;
@@ -80,7 +80,7 @@
 }
 
 .hero-button:hover {
-  background: #ffdf87;
+  background: #e9dfc9;
   transform: translateY(-3px);
 }
 
@@ -97,7 +97,7 @@
 
 .hero-circle {
   position: absolute;
-  border: 1px solid rgba(255, 255, 255, 0.17);
+  border: 1px solid rgba(255, 253, 247, 0.17);
   border-radius: 50%;
 }
 
@@ -117,8 +117,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 253, 247, 0.12);
+  border: 1px solid rgba(255, 253, 247, 0.2);
   border-radius: 50%;
   font-size: 55px;
   backdrop-filter: blur(5px);
@@ -127,7 +127,7 @@
 .hero-decoration-text {
   position: absolute;
   bottom: 0;
-  color: #f6d77a;
+  color: #f0d98d;
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 2px;
@@ -137,25 +137,25 @@
 /* Overview Heading */
 
 .dashboard-overview {
-  margin: 38px 0 22px;
+  margin: 35px 0 22px;
 }
 
 .section-label {
-  color: #b38b29;
+  color: #2546a8;
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 2px;
 }
 
 .dashboard-overview h2 {
-  color: #142b68;
+  color: #192b55;
   font-size: 25px;
   font-weight: 750;
   margin: 8px 0;
 }
 
 .dashboard-overview p {
-  color: #78839b;
+  color: #68748b;
   font-size: 14px;
   margin: 0;
 }
@@ -165,21 +165,21 @@
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 20px;
+  gap: 22px;
 }
 
 .stat-card {
-  background: #ffffff;
-  padding: 23px;
+  background: #fffdf7;
+  padding: 25px 24px;
   border-radius: 16px;
-  border: 1px solid #e8ebf4;
-  box-shadow: 0 5px 18px rgba(28, 48, 100, 0.045);
+  border: 1px solid #e9dfc9;
+  box-shadow: 0 5px 18px rgba(25, 43, 85, 0.045);
   transition: 0.25s ease;
 }
 
 .stat-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 12px 25px rgba(28, 48, 100, 0.1);
+  box-shadow: 0 12px 25px rgba(25, 43, 85, 0.1);
 }
 
 .stat-top {
@@ -199,26 +199,26 @@
 }
 
 .stat-arrow {
-  color: #aab2c5;
+  color: #68748b;
   font-size: 20px;
 }
 
 .stat-card h3 {
-  color: #66718a;
+  color: #68748b;
   font-size: 13px;
   font-weight: 600;
   margin: 22px 0 8px;
 }
 
 .stat-count {
-  color: #172e70;
+  color: #2546a8;
   font-size: 34px;
   font-weight: 800;
   margin-bottom: 5px;
 }
 
 .stat-card p {
-  color: #9aa3b5;
+  color: #68748b;
   font-size: 12px;
   margin: 0;
 }
@@ -226,37 +226,39 @@
 /* Individual Card Colors */
 
 .stat-card.total .stat-icon {
-  background: #e9efff;
-  color: #2852b5;
+  background: #dce7fa;
+  color: #2546a8;
 }
 
 .stat-card.pending .stat-icon {
-  background: #fff5dc;
+  background: #f0d98d;
+  color: #192b55;
 }
 
 .stat-card.progress .stat-icon {
-  background: #e9f0ff;
+  background: #dce7fa;
+  color: #5279d8;
 }
 
 .stat-card.resolved .stat-icon {
-  background: #e6f7ef;
-  color: #21966a;
+  background: #e9dfc9;
+  color: #2546a8;
 }
 
 /* Complaint CTA */
 
 .complaint-cta {
-  margin-top: 32px;
-  padding: 27px 32px;
-  background: #ffffff;
-  border: 1px solid #e9e5d9;
-  border-left: 5px solid #d6ad48;
+  margin-top: 30px;
+  padding: 25px 30px;
+  background: #fffdf7;
+  border: 1px solid #e9dfc9;
+  border-left: 5px solid #f0d98d;
   border-radius: 15px;
   display: flex;
   align-items: center;
   gap: 22px;
   justify-content: space-between;
-  box-shadow: 0 5px 18px rgba(28, 48, 100, 0.04);
+  box-shadow: 0 5px 18px rgba(25, 43, 85, 0.04);
 }
 
 .cta-icon {
@@ -265,8 +267,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #fff5dc;
-  color: #b38b29;
+  background: #f0d98d;
+  color: #192b55;
   border-radius: 13px;
   font-size: 27px;
 }
@@ -276,28 +278,28 @@
 }
 
 .cta-content span {
-  color: #b38b29;
+  color: #2546a8;
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 1.8px;
 }
 
 .cta-content h2 {
-  color: #172e70;
+  color: #192b55;
   font-size: 17px;
   margin: 7px 0;
 }
 
 .cta-content p {
-  color: #7d879c;
+  color: #68748b;
   font-size: 13px;
   line-height: 1.6;
   margin: 0;
 }
 
 .cta-button {
-  background: #17377f;
-  color: #ffffff;
+  background: #2546a8;
+  color: #fffdf7;
   border: none;
   border-radius: 9px;
   padding: 14px 21px;
@@ -309,14 +311,18 @@
 }
 
 .cta-button:hover {
-  background: #d1a83f;
-  color: #172e70;
+  background: #f0d98d;
+  color: #192b55;
   transform: translateY(-2px);
 }
 
 /* Responsive Design */
 
-@media (max-width: 1000px) {
+@media (max-width: 1200px) {
+  .student-dashboard {
+    padding: 28px 25px;
+  }
+
   .stats-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -328,11 +334,11 @@
 
 @media (max-width: 700px) {
   .student-dashboard {
-    padding: 20px;
+    padding: 22px 18px;
   }
 
   .dashboard-hero {
-    padding: 35px 25px;
+    padding: 32px 25px;
     min-height: 270px;
   }
 
@@ -342,6 +348,14 @@
 
   .hero-decoration {
     display: none;
+  }
+
+  .dashboard-overview {
+    margin: 28px 0 18px;
+  }
+
+  .stats-grid {
+    gap: 15px;
   }
 
   .complaint-cta {
@@ -355,8 +369,13 @@
 }
 
 @media (max-width: 450px) {
+  .student-dashboard {
+    padding: 16px 13px;
+  }
+
   .stats-grid {
     grid-template-columns: 1fr;
+    gap: 14px;
   }
 
   .dashboard-hero {
