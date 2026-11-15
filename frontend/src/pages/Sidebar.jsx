@@ -69,9 +69,9 @@ const Sidebar = ({ role, isOpen, onToggle }) => {
       {/* LOGO AND BRANDING */}
       <div className="sidebar-logo">
         <div className="sidebar-brand">
-          <div className="mendit-logo">
-            <img src="/MendItLogo.png" alt="MendIt Logo" />
-          </div>
+          {/* <div className="mendit-logo">
+            <img src="/MendItLogoTransparent.png" alt="MendIt Logo" />
+          </div> */}
 
           {isOpen && (
             <div className="sidebar-brand-text">

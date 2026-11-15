@@ -42,6 +42,11 @@
   color: #fffdf7;
   border-right: 1px solid rgba(233, 223, 201, 0.2);
   box-shadow: 5px 0 20px rgba(25, 43, 85, 0.08);
+  /* background: linear-gradient(180deg, #eaf2f5 0%, #dce9ef 100%);
+
+  color: #192b55;
+  border-right: 1px solid rgba(25, 43, 85, 0.12);
+  box-shadow: 5px 0 20px rgba(25, 43, 85, 0.08); */
 
   transition:
     width 0.3s ease,
@@ -117,8 +122,8 @@
 }
 
 .mendit-logo {
-  width: 48px;
-  height: 48px;
+  width: 58px;
+  height: 58px;
   flex-shrink: 0;
 
   display: flex;
@@ -130,6 +135,8 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 0 5px rgba(240, 217, 141, 0.45));
 }
 
 .sidebar-brand-text h2 {
@@ -159,6 +166,11 @@
 
 .sidebar.collapsed .sidebar-brand {
   justify-content: center;
+}
+
+.sidebar.collapsed .mendit-logo {
+  width: 52px;
+  height: 52px;
 }
 
 /* ================================
@@ -297,3 +309,35 @@
     padding: 18px 12px;
   }
 }
+
+.sidebar.collapsed .sidebar-top {
+  justify-content: center;
+}
+/* .sidebar-toggle {
+  border: 1px solid rgba(25, 43, 85, 0.15);
+  background: rgba(25, 43, 85, 0.06);
+  color: #192b55;
+}
+
+.sidebar-link {
+  color: #192b55;
+}
+
+.sidebar-link:hover {
+  background: rgba(0, 153, 153, 0.1);
+  color: #007f83;
+}
+
+.sidebar-heading,
+.sidebar-brand-text p {
+  color: #526a7d;
+}
+
+.sidebar-logout {
+  color: #192b55;
+}
+
+.sidebar-logout:hover {
+  background: rgba(0, 153, 153, 0.1);
+  color: #007f83;
+} */
