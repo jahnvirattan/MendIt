@@ -39,8 +39,9 @@ function App() {
               path="/admin/complaints/:id"
               element={<ComplaintDetails />}
             />
+            <Route path="/adminDashboard" element={<AdminDashboard />} />
           </Route>
-          <Route path="/adminDashboard" element={<AdminDashboard />} />
+
           {/* </Route> */}
         </Routes>
       </BrowserRouter>

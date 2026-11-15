@@ -56,7 +56,7 @@ const StudentDashboard = () => {
 
           <button
             className="hero-button"
-            onClick={() => navigate("/submit-complaint")}
+            onClick={() => navigate("/submitComplaint")}
           >
             Submit a Complaint <span>→</span>
           </button>
@@ -114,7 +114,7 @@ const StudentDashboard = () => {
 
         <button
           className="cta-button"
-          onClick={() => navigate("/submit-complaint")}
+          onClick={() => navigate("/submitComplaint")}
         >
           + New Complaint
         </button>

@@ -23,7 +23,7 @@ const Sidebar = ({ role, isOpen, onToggle }) => {
     },
     {
       name: "Profile",
-      path: "/profile",
+      path: "/student/profile",
       icon: "fa-solid fa-user",
     },
   ];
@@ -40,8 +40,8 @@ const Sidebar = ({ role, isOpen, onToggle }) => {
       icon: "fa-solid fa-file-lines",
     },
     {
-      name: "Reports",
-      path: "/admin/reports",
+      name: "Complaint Details",
+      path: "/admin/complaints/:id",
       icon: "fa-solid fa-chart-column",
     },
   ];
