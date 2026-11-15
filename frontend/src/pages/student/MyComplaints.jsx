@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "./MyComplaints.css";
+import FeedbackForm from "./FeedbackForm";
 
 const API_URL = "http://localhost:8080/api/student/complaints";
 
@@ -63,6 +64,16 @@ function normalizeComplaint(row) {
     submittedAt: row.submittedAt || row.submitted_at || "",
     updatedAt: row.updatedAt || row.updated_at || "",
     resolvedAt: row.resolvedAt || row.resolved_at || "",
+    feedbackSubmitted:
+    row.feedbackSubmitted ??
+    row.feedback_submitted ??
+    Boolean(row.feedback),
+
+    feedbackRating:
+    row.feedbackRating ??
+    row.feedback_rating ??
+    row.feedback?.rating ??
+    null,
   };
 }
 
@@ -471,6 +482,26 @@ function MyComplaints() {
                     ))}
                   </div>
                 </div>
+                {selectedComplaint.status === "RESOLVED" && (
+                    <FeedbackForm
+                        complaintId={selectedComplaint.id}
+                        feedbackSubmitted={selectedComplaint.feedbackSubmitted}
+                        feedbackRating={selectedComplaint.feedbackRating}
+                        onSubmitted={({ rating }) => {
+                        setComplaints((currentComplaints) =>
+                            currentComplaints.map((complaint) =>
+                            String(complaint.id) === String(selectedComplaint.id)
+                                ? {
+                                    ...complaint,
+                                    feedbackSubmitted: true,
+                                    feedbackRating: rating,
+                                }
+                                : complaint,
+                            ),
+                        );
+                        }}
+                    />
+                    )}
               </aside>
             )}
           </section>
