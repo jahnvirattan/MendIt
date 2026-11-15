@@ -1,0 +1,299 @@
+/* ================================
+   DASHBOARD LAYOUT
+================================ */
+
+.dashboard-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f9f6ed;
+  font-family: "Segoe UI", sans-serif;
+  color: #192b55;
+}
+
+.dashboard-content {
+  flex: 1;
+  min-width: 0;
+  padding: 28px;
+  box-sizing: border-box;
+  transition: padding 0.3s ease;
+}
+
+/* ================================
+   SIDEBAR
+================================ */
+
+.sidebar {
+  width: 260px;
+  min-width: 260px;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  flex-shrink: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 18px 16px 22px;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  background: linear-gradient(180deg, #192b55, #2546a8);
+  color: #fffdf7;
+  border-right: 1px solid rgba(233, 223, 201, 0.2);
+  box-shadow: 5px 0 20px rgba(25, 43, 85, 0.08);
+
+  transition:
+    width 0.3s ease,
+    min-width 0.3s ease,
+    padding 0.3s ease;
+}
+
+/* COLLAPSED SIDEBAR */
+
+.sidebar.collapsed {
+  width: 82px;
+  min-width: 82px;
+  padding: 18px 10px 22px;
+}
+
+/* ================================
+   HAMBURGER
+================================ */
+
+.sidebar-top {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+  min-height: 36px;
+  margin-bottom: 14px;
+}
+
+.sidebar-toggle {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid rgba(255, 253, 247, 0.2);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+
+  color: #fffdf7;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.sidebar-toggle:hover {
+  background: #f0d98d;
+  color: #192b55;
+}
+
+/* ================================
+   LOGO SECTION
+================================ */
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+
+  min-height: 65px;
+  padding: 5px 4px 20px;
+  margin-bottom: 24px;
+
+  border-bottom: 1px solid rgba(233, 223, 201, 0.25);
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+}
+
+.mendit-logo {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mendit-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.sidebar-brand-text h2 {
+  font-size: 25px;
+  font-weight: 800;
+  letter-spacing: -0.8px;
+  color: #fffdf7;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.sidebar-brand-text p {
+  font-size: 10px;
+  color: #c5cee0;
+  margin: 4px 0 0;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+/* COLLAPSED LOGO */
+
+.sidebar.collapsed .sidebar-logo {
+  justify-content: center;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.sidebar.collapsed .sidebar-brand {
+  justify-content: center;
+}
+
+/* ================================
+   NAVIGATION
+================================ */
+
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.sidebar-heading {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.3px;
+  color: #c5cee0;
+  margin: 0 0 8px 10px;
+}
+
+/* NAVIGATION LINKS */
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  width: 100%;
+  min-height: 46px;
+  padding: 0 14px;
+  box-sizing: border-box;
+
+  border-radius: 9px;
+  color: #e7ebf5;
+  text-decoration: none;
+
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+
+  transition: 0.25s ease;
+}
+
+.sidebar-link i {
+  width: 20px;
+  flex-shrink: 0;
+  text-align: center;
+  font-size: 16px;
+}
+
+.sidebar-link:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fffdf7;
+}
+
+.sidebar-link.active {
+  background: #f0d98d;
+  color: #192b55;
+  font-weight: 700;
+}
+
+/* COLLAPSED NAVIGATION */
+
+.sidebar.collapsed .sidebar-link {
+  justify-content: center;
+  padding: 0;
+}
+
+.sidebar.collapsed .sidebar-link i {
+  font-size: 18px;
+}
+
+/* ================================
+   LOGOUT
+================================ */
+
+.sidebar-bottom {
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid rgba(233, 223, 201, 0.25);
+}
+
+.sidebar-logout {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  width: 100%;
+  min-height: 46px;
+  padding: 0 14px;
+
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+
+  color: #fffdf7;
+  font-size: 13px;
+  cursor: pointer;
+  text-align: left;
+
+  transition: 0.25s ease;
+}
+
+.sidebar-logout i {
+  width: 20px;
+  text-align: center;
+  font-size: 16px;
+}
+
+.sidebar-logout:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #f0d98d;
+}
+
+.sidebar.collapsed .sidebar-logout {
+  justify-content: center;
+  padding: 0;
+}
+
+/* ================================
+   RESPONSIVE
+================================ */
+
+@media (max-width: 600px) {
+  .sidebar.expanded {
+    width: 230px;
+    min-width: 230px;
+  }
+
+  .sidebar.collapsed {
+    width: 72px;
+    min-width: 72px;
+  }
+
+  .dashboard-content {
+    padding: 18px 12px;
+  }
+}
