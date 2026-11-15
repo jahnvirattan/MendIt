@@ -390,3 +390,385 @@
     font-size: 22px;
   }
 }
+
+/* =========================================
+   RECENT COMPLAINTS SECTION
+========================================= */
+
+.recent-complaints {
+  width: 100%;
+  margin-top: 35px;
+  box-sizing: border-box;
+}
+
+/* Section Heading */
+
+.recent-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+  gap: 15px;
+}
+
+.recent-header h2 {
+  color: #192b55;
+  font-size: 24px;
+  font-weight: 750;
+  margin: 8px 0;
+}
+
+.recent-header p {
+  color: #68748b;
+  font-size: 14px;
+  margin: 0;
+}
+
+.view-all-button {
+  background: transparent;
+  border: none;
+  color: #2546a8;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: 0.2s ease;
+}
+
+.view-all-button:hover {
+  color: #5279d8;
+}
+
+/* Complaints List Card */
+
+.complaints-list {
+  background: #fffdf7;
+  border: 1px solid #e9dfc9;
+  border-radius: 16px;
+  padding: 8px 22px;
+  box-shadow: 0 5px 18px rgba(25, 43, 85, 0.045);
+}
+
+.complaint-item {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 16px 0;
+  border-bottom: 1px solid #e9dfc9;
+}
+
+.complaint-item:last-child {
+  border-bottom: none;
+}
+
+/* Complaint Icon */
+
+.complaint-item-icon {
+  width: 54px;
+  height: 54px;
+  min-width: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #dce7fa;
+  border-radius: 50%;
+  font-size: 23px;
+}
+
+/* Complaint Details */
+
+.complaint-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.complaint-item-info h3 {
+  color: #192b55;
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.complaint-item-info p {
+  color: #68748b;
+  font-size: 13px;
+  margin: 0;
+}
+
+/* Complaint Status */
+
+.complaint-status {
+  padding: 8px 15px;
+  border-radius: 25px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.complaint-status.in-progress {
+  background: #f0d98d;
+  color: #192b55;
+}
+
+.complaint-status.resolved {
+  background: #e4efe3;
+  color: #286442;
+}
+
+/* Complaint Arrow */
+
+.complaint-arrow {
+  border: none;
+  background: transparent;
+  color: #68748b;
+  font-size: 29px;
+  cursor: pointer;
+  padding: 0 4px;
+  transition: 0.2s ease;
+}
+
+.complaint-arrow:hover {
+  color: #2546a8;
+  transform: translateX(3px);
+}
+
+/* =========================================
+   COMPLAINT PROGRESS TRACKER
+========================================= */
+
+.progress-tracker {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 25px 0 15px;
+  padding: 25px 24px;
+  background: #fffdf7;
+  border: 1px solid #e9dfc9;
+  border-radius: 16px;
+  box-shadow: 0 5px 18px rgba(25, 43, 85, 0.045);
+}
+
+/* Tracker Heading */
+
+.tracker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 32px;
+}
+
+.tracker-header h2 {
+  color: #192b55;
+  font-size: 20px;
+  font-weight: 750;
+  margin: 0 0 8px;
+}
+
+.tracker-header p {
+  color: #68748b;
+  font-size: 13px;
+  margin: 0;
+}
+
+/* Track Button */
+
+.track-button {
+  background: #f0d98d;
+  color: #192b55;
+  border: none;
+  padding: 10px 17px;
+  border-radius: 25px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.track-button:hover {
+  background: #e9dfc9;
+  transform: translateY(-2px);
+}
+
+/* Progress Steps Layout */
+
+.progress-steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  position: relative;
+  gap: 8px;
+}
+
+.progress-step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  min-width: 0;
+}
+
+/* Connecting Lines */
+
+.progress-step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  height: 3px;
+  width: calc(100% - 42px);
+  top: 16px;
+  left: calc(50% + 21px);
+  background: #e9dfc9;
+  z-index: 0;
+}
+
+.progress-step.completed:not(:last-child)::after {
+  background: #2546a8;
+}
+
+/* Step Circles */
+
+.step-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #f9f6ed;
+  border: 2px solid #e9dfc9;
+  color: #68748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  z-index: 1;
+  box-sizing: border-box;
+}
+
+.progress-step.completed .step-circle {
+  background: #2546a8;
+  border-color: #2546a8;
+  color: #fffdf7;
+}
+
+.progress-step.active .step-circle {
+  background: #f0d98d;
+  border-color: #f0d98d;
+  color: #192b55;
+}
+
+/* Step Text */
+
+.progress-step h3 {
+  color: #192b55;
+  font-size: 13px;
+  font-weight: 700;
+  margin: 13px 0 7px;
+}
+
+.progress-step.active h3 {
+  color: #2546a8;
+}
+
+.progress-step p {
+  color: #68748b;
+  font-size: 12px;
+  line-height: 1.5;
+  max-width: 130px;
+  margin: 0;
+}
+
+/* =========================================
+   RESPONSIVE DESIGN
+========================================= */
+
+@media (max-width: 900px) {
+  .complaint-item {
+    gap: 13px;
+  }
+
+  .progress-tracker {
+    padding: 20px;
+  }
+
+  .progress-step p {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 600px) {
+  .recent-header {
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .recent-header h2 {
+    font-size: 21px;
+  }
+
+  .view-all-button {
+    font-size: 12px;
+    margin-top: 10px;
+  }
+
+  .complaints-list {
+    padding: 5px 13px;
+  }
+
+  .complaint-item {
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .complaint-item-icon {
+    width: 43px;
+    height: 43px;
+    min-width: 43px;
+    font-size: 19px;
+  }
+
+  .complaint-item-info h3 {
+    font-size: 14px;
+  }
+
+  .complaint-item-info p {
+    font-size: 11px;
+  }
+
+  .complaint-status {
+    font-size: 10px;
+    padding: 7px 10px;
+  }
+
+  .tracker-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .progress-tracker {
+    padding: 18px 12px;
+  }
+
+  .progress-steps {
+    gap: 3px;
+  }
+
+  .progress-step h3 {
+    font-size: 10px;
+  }
+
+  .progress-step p {
+    font-size: 9px;
+    padding: 0 2px;
+  }
+
+  .step-circle {
+    width: 30px;
+    height: 30px;
+    font-size: 12px;
+  }
+
+  .progress-step:not(:last-child)::after {
+    top: 13px;
+    width: calc(100% - 32px);
+    left: calc(50% + 16px);
+  }
+}

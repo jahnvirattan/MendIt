@@ -35,7 +35,42 @@ const StudentDashboard = () => {
       className: "resolved",
     },
   ];
+  const recentComplaints = [
+    {
+      id: "MEND-0008",
+      title: "Projector not working",
+      location: "Block A · Classroom 204",
+      icon: "📽️",
+      status: "In Progress",
+      statusClass: "in-progress",
+    },
+    {
+      id: "MEND-0005",
+      title: "Leaking tap",
+      location: "Block B · Washroom",
+      icon: "🚰",
+      status: "Resolved",
+      statusClass: "resolved",
+    },
+    {
+      id: "MEND-0003",
+      title: "Wi-Fi not working",
+      location: "Block C · Library",
+      icon: "📶",
+      status: "Resolved",
+      statusClass: "resolved",
+    },
+  ];
+  const studentName = "Akanksha";
 
+  const currentHour = new Date().getHours();
+
+  const greeting =
+    currentHour < 12
+      ? "Good morning"
+      : currentHour < 17
+        ? "Good afternoon"
+        : "Good evening";
   return (
     <div className="student-dashboard">
       {/* Welcome Banner */}
@@ -44,15 +79,10 @@ const StudentDashboard = () => {
           <span className="hero-label">🌿 WELCOME TO MENDIT</span>
 
           <h1>
-            A Cleaner Campus,
-            <br />
-            <span>A Healthier You.</span>
+            {greeting}, <span>{studentName}!</span>
           </h1>
 
-          <p>
-            Together for a better campus environment. Your voice makes a
-            difference.
-          </p>
+          <p>Your campus, your voice. Let's make it better.</p>
 
           <button
             className="hero-button"
@@ -116,8 +146,105 @@ const StudentDashboard = () => {
           className="cta-button"
           onClick={() => navigate("/submitComplaint")}
         >
-          + New Complaint
+          + Submit a Complaint
         </button>
+      </section>
+      {/* Recent Complaints Section */}
+
+      <section className="recent-complaints">
+        <div className="recent-header">
+          <div>
+            <span className="section-label">YOUR REPORTS</span>
+            <h2>Recent Complaints</h2>
+            <p>Keep track of the issues you have reported.</p>
+          </div>
+
+          <button
+            className="view-all-button"
+            onClick={() => navigate("/myComplaints")}
+          >
+            View All Complaints →
+          </button>
+        </div>
+
+        <div className="complaints-list">
+          {recentComplaints.map((complaint) => (
+            <div className="complaint-item" key={complaint.id}>
+              <div className="complaint-item-icon">{complaint.icon}</div>
+
+              <div className="complaint-item-info">
+                <h3>{complaint.title}</h3>
+                <p>
+                  {complaint.location} · #{complaint.id}
+                </p>
+              </div>
+
+              <span className={`complaint-status ${complaint.statusClass}`}>
+                {complaint.status}
+              </span>
+
+              <button
+                className="complaint-arrow"
+                onClick={() => navigate("/trackComplaint")}
+                aria-label={`Track ${complaint.id}`}
+              >
+                ›
+              </button>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Complaint Progress Tracker */}
+
+      <section className="progress-tracker">
+        <div className="tracker-header">
+          <div>
+            <h2>Complaint Progress Tracker</h2>
+            <p>MEND-0008 · Projector not working</p>
+          </div>
+
+          <button
+            className="track-button"
+            onClick={() => navigate("/trackComplaint")}
+          >
+            Track Your Complaint
+          </button>
+        </div>
+
+        <div className="progress-steps">
+          <div className="progress-step completed">
+            <div className="step-circle">✓</div>
+
+            <h3>Submitted</h3>
+
+            <p>Complaint successfully received</p>
+          </div>
+
+          <div className="progress-step completed">
+            <div className="step-circle">✓</div>
+
+            <h3>Under Review</h3>
+
+            <p>Admin has reviewed the complaint</p>
+          </div>
+
+          <div className="progress-step active">
+            <div className="step-circle">3</div>
+
+            <h3>In Progress</h3>
+
+            <p>Maintenance work is underway</p>
+          </div>
+
+          <div className="progress-step">
+            <div className="step-circle">4</div>
+
+            <h3>Resolved</h3>
+
+            <p>Issue has been fixed</p>
+          </div>
+        </div>
       </section>
     </div>
   );
