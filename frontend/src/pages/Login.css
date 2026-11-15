@@ -1,4 +1,6 @@
-/* ===== Main Login Page ===== */
+/* =========================================
+   MAIN LOGIN PAGE
+========================================= */
 
 .login-page {
   min-height: 100vh;
@@ -13,7 +15,9 @@
   box-sizing: border-box;
 }
 
-/* ===== Left Branding Section ===== */
+/* =========================================
+   LEFT BRANDING SECTION
+========================================= */
 
 .login-branding {
   width: 48%;
@@ -30,11 +34,22 @@
   border-radius: 14px 0 0 14px;
 
   background:
-    radial-gradient(circle at 10% 10%, #dce7fa 0, transparent 40%),
-    linear-gradient(145deg, #dce7fa, #e9dfc9, #f9f6ed);
+    radial-gradient(
+      circle at 85% 15%,
+      rgba(82, 121, 216, 0.65),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 10% 90%,
+      rgba(240, 217, 141, 0.2),
+      transparent 35%
+    ),
+    linear-gradient(145deg, #192b55 0%, #2546a8 55%, #5279d8 100%);
 
-  border: 1px solid #e9dfc9;
+  border: 1px solid #2546a8;
 }
+
+/* Decorative Background Circles */
 
 .login-branding::before {
   content: "";
@@ -42,7 +57,8 @@
   width: 420px;
   height: 420px;
   border-radius: 50%;
-  background: rgba(37, 70, 168, 0.06);
+  background: rgba(255, 253, 247, 0.055);
+  border: 1px solid rgba(255, 253, 247, 0.12);
   top: -180px;
   left: -150px;
 }
@@ -53,55 +69,60 @@
   width: 350px;
   height: 350px;
   border-radius: 50%;
-  background: rgba(240, 217, 141, 0.25);
+  background: rgba(240, 217, 141, 0.09);
+  border: 1px solid rgba(240, 217, 141, 0.15);
   bottom: -190px;
   right: -100px;
 }
+
+/* Branding Logo */
 
 .brand-logo {
   position: relative;
   z-index: 1;
 }
 
-/* .logo-icon {
-  font-size: 65px;
-  margin-bottom: 8px;
-} */
 .logo-icon {
-  width: 90px;
-  height: 90px;
+  width: 110px;
+  height: 110px;
   flex-shrink: 0;
-  background: transparent;
-  border: none;
-  border-radius: 20px;
+  background: rgba(255, 253, 247, 0.13);
+  border: 1px solid rgba(255, 253, 247, 0.25);
+  border-radius: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  margin: 0 auto 14px;
+  margin: 0 auto 16px;
+  box-shadow: 0 10px 30px rgba(25, 43, 85, 0.2);
+  backdrop-filter: blur(8px);
 }
 
 .logo-icon img {
-  width: 75px;
-  height: 75px;
+  width: 88px;
+  height: 88px;
   object-fit: contain;
   display: block;
 }
+
 .brand-logo h1 {
-  font-size: 46px;
+  font-size: 48px;
   font-weight: 800;
   letter-spacing: -1.5px;
-  color: #2546a8;
+  color: #fffdf7;
   margin: 0;
 }
 
 .brand-logo p {
-  font-size: 15px;
-  color: #68748b;
+  font-size: 14px;
+  color: #dce7fa;
   margin-top: 10px;
-  letter-spacing: 0.3px;
+  letter-spacing: 1px;
   line-height: 1.6;
+  font-weight: 500;
 }
+
+/* Branding Message */
 
 .brand-message {
   margin-top: 38px;
@@ -110,12 +131,18 @@
 }
 
 .brand-message h3 {
-  font-size: 19px;
-  color: #192b55;
+  font-size: 20px;
+  color: #fffdf7;
   margin: 9px 0;
   font-weight: 700;
   line-height: 1.5;
 }
+
+.brand-message h3:last-child {
+  color: #f0d98d;
+}
+
+/* Branding Footer */
 
 .brand-footer {
   position: absolute;
@@ -126,10 +153,12 @@
 .brand-footer p {
   margin: 5px;
   font-size: 13px;
-  color: #68748b;
+  color: #dce7fa;
 }
 
-/* ===== Right Login Container ===== */
+/* =========================================
+   RIGHT LOGIN CONTAINER
+========================================= */
 
 .login-container {
   width: 52%;
@@ -146,10 +175,12 @@
   border: 1px solid #e9dfc9;
   border-left: none;
   border-radius: 0 14px 14px 0;
-  box-shadow: 8px 8px 30px rgba(25, 43, 85, 0.05);
+  box-shadow: 8px 8px 30px rgba(25, 43, 85, 0.07);
 }
 
-/* ===== Login Tabs ===== */
+/* =========================================
+   LOGIN TABS
+========================================= */
 
 .login-tabs {
   display: flex;
@@ -178,10 +209,12 @@
 
 .login-tabs .active-tab {
   color: #2546a8;
-  border-bottom: 3px solid #f0d98d;
+  border-bottom: 3px solid #2546a8;
 }
 
-/* ===== Login Heading ===== */
+/* =========================================
+   LOGIN HEADING
+========================================= */
 
 .login-heading {
   text-align: center;
@@ -189,7 +222,7 @@
 }
 
 .login-heading h2 {
-  font-size: 26px;
+  font-size: 27px;
   color: #192b55;
   margin: 0 0 10px;
   font-weight: 750;
@@ -202,7 +235,9 @@
   line-height: 1.6;
 }
 
-/* ===== Input Fields ===== */
+/* =========================================
+   INPUT FIELDS
+========================================= */
 
 .login-input {
   display: flex;
@@ -212,21 +247,22 @@
   gap: 12px;
   padding: 0 16px;
   margin: 0 0 16px;
-  border: 1px solid #e9dfc9;
+  border: 1px solid #d8dfef;
   border-radius: 9px;
-  background: #fffdf7;
+  background: #f9f6ed;
   box-sizing: border-box;
   transition: 0.25s;
 }
 
 .login-input:focus-within {
   border-color: #2546a8;
-  box-shadow: 0 0 0 3px rgba(37, 70, 168, 0.08);
+  box-shadow: 0 0 0 3px rgba(37, 70, 168, 0.1);
+  background: #fffdf7;
 }
 
 .login-input span {
   font-size: 18px;
-  color: #5279d8;
+  color: #2546a8;
   flex-shrink: 0;
 }
 
@@ -259,7 +295,9 @@
   padding: 5px 0 5px 5px;
 }
 
-/* ===== Remember Me & Forgot Password ===== */
+/* =========================================
+   REMEMBER ME & FORGOT PASSWORD
+========================================= */
 
 .login-options {
   display: flex;
@@ -301,7 +339,9 @@
   color: #5279d8;
 }
 
-/* ===== Error Message ===== */
+/* =========================================
+   ERROR MESSAGE
+========================================= */
 
 .login-error {
   color: #d32f2f;
@@ -310,7 +350,9 @@
   text-align: center;
 }
 
-/* ===== Login Button ===== */
+/* =========================================
+   LOGIN BUTTON
+========================================= */
 
 .login-button {
   display: block;
@@ -331,9 +373,9 @@
 }
 
 .login-button:hover:not(:disabled) {
-  background: linear-gradient(110deg, #192b55, #2546a8);
-  box-shadow: 0 4px 12px rgba(25, 43, 85, 0.16);
-  transform: translateY(-1px);
+  background: linear-gradient(110deg, #5279d8, #2546a8);
+  box-shadow: 0 5px 15px rgba(37, 70, 168, 0.2);
+  transform: translateY(-2px);
 }
 
 .login-button:disabled {
@@ -341,7 +383,9 @@
   cursor: not-allowed;
 }
 
-/* ===== Consistent Form Alignment ===== */
+/* =========================================
+   CONSISTENT FORM ALIGNMENT
+========================================= */
 
 .login-container > .login-input,
 .login-container > .login-options,
@@ -350,7 +394,9 @@
   box-sizing: border-box;
 }
 
-/* ===== Divider ===== */
+/* =========================================
+   DIVIDER
+========================================= */
 
 .login-divider {
   display: flex;
@@ -367,7 +413,9 @@
   background: #e9dfc9;
 }
 
-/* ===== Register Text ===== */
+/* =========================================
+   REGISTER TEXT
+========================================= */
 
 .register-text {
   text-align: center;
@@ -390,7 +438,9 @@
   color: #5279d8;
 }
 
-/* ===== Responsive Design ===== */
+/* =========================================
+   RESPONSIVE DESIGN
+========================================= */
 
 @media (max-width: 1000px) {
   .login-page {
@@ -419,13 +469,11 @@
     font-size: 32px;
   }
 
-  /* .logo-icon {
-    font-size: 35px;
-  } */
   .logo-icon {
     width: 65px;
     height: 65px;
     margin-bottom: 8px;
+    border-radius: 17px;
   }
 
   .logo-icon img {
