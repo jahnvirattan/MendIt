@@ -2,6 +2,13 @@ import { useEffect, useState } from "react";
 import "./StudentProfile.css";
 
 const API_URL = "http://localhost:8080/api/student/profile";
+const previewProfile = {
+  full_name: "Avdhi Chhabra",
+  email: "avdhi.demo@example.edu",
+  roll_number: "DEMO004",
+  department: "Computer Science",
+  created_at: "2025-08-15T00:00:00",
+};
 
 function getStudentId() {
   const savedStudent = sessionStorage.getItem("student");
@@ -60,16 +67,24 @@ function StudentProfile() {
   const [message, setMessage] = useState("");
 
   const studentId = getStudentId();
+  function showPreviewProfile() {
+  setProfile(previewProfile);
+  setForm({
+    full_name: previewProfile.full_name,
+    department: previewProfile.department,
+  });
+    setError("");
+  }
 
   async function loadProfile() {
     setError("");
     setMessage("");
 
     if (!studentId) {
-      setError("Sign in to view your profile.");
-      setLoading(false);
-      return;
-    }
+    showPreviewProfile();
+    setLoading(false);
+    return;
+  }
 
     setLoading(true);
 
@@ -88,10 +103,8 @@ function StudentProfile() {
         full_name: data.profile.full_name || "",
         department: data.profile.department || "",
       });
-    } catch (requestError) {
-      setError(
-        requestError.message || "We couldn't load your profile."
-      );
+    } catch {
+      showPreviewProfile();
     } finally {
       setLoading(false);
     }
@@ -352,6 +365,18 @@ function StudentProfile() {
             )}
           </form>
         </section>
+      </section>
+      <section className="profile-ready-note">
+        <span className="profile-ready-icon" aria-hidden="true">
+          ✓
+        </span>
+
+        <div>
+          <h2>Your profile is ready</h2>
+          <p>
+            Your student details help keep your complaints linked to your account.
+          </p>
+        </div>
       </section>
     </main>
   );

@@ -337,3 +337,46 @@
     width: 100%;
   }
 }
+.profile-ready-note {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 20px;
+  padding: 16px 20px;
+  border: 1px solid #e9dfc9;
+  border-radius: 16px;
+  background: #f1f5fd;
+}
+
+.profile-ready-icon {
+  display: grid;
+  flex: 0 0 38px;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border-radius: 50%;
+  background: #dce7fa;
+  color: #2546a8;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.profile-ready-note h2 {
+  margin: 0 0 4px;
+  color: #192b55;
+  font-size: 14px;
+}
+
+.profile-ready-note p {
+  margin: 0;
+  color: #68748b;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+@media (max-width: 520px) {
+  .profile-ready-note {
+    align-items: flex-start;
+    padding: 15px;
+  }
+}

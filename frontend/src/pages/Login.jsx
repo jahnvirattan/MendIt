@@ -71,7 +71,9 @@ const Login = () => {
         JSON.stringify(data.user),
       );
 
-      navigate(activeRole === "student" ? "/dashboard" : "/admin-dashboard");
+      navigate(
+      activeRole === "student" ? "/studentDashboard" : "/adminDashboard"
+    );
     } catch (err) {
       setError(err.message || "Something went wrong. Please try again.");
     } finally {

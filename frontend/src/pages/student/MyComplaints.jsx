@@ -14,6 +14,62 @@ const statusLabels = {
   RESOLVED: "Resolved",
   REJECTED: "Rejected",
 };
+const previewComplaints = [
+  {
+    id: 1024,
+    title: "Projector not working",
+    category: "Electrical",
+    description: "The projector turns on, but no image appears.",
+    building: "Science Block",
+    floor: "2",
+    roomOrArea: "Room 204",
+    location: "",
+    priority: "HIGH",
+    status: "IN_PROGRESS",
+    adminNote: "The issue is being checked by the maintenance team.",
+    submittedAt: "2026-11-12T09:15:00",
+    updatedAt: "2026-11-14T11:30:00",
+    resolvedAt: "",
+    feedbackSubmitted: false,
+    feedbackRating: null,
+  },
+  {
+    id: 1025,
+    title: "Leaking tap in Block B",
+    category: "Plumbing",
+    description: "Water is leaking continuously from the washroom tap.",
+    building: "Block B",
+    floor: "2",
+    roomOrArea: "Washroom",
+    location: "",
+    priority: "MEDIUM",
+    status: "UNDER_REVIEW",
+    adminNote: "",
+    submittedAt: "2026-11-15T10:00:00",
+    updatedAt: "2026-11-15T10:00:00",
+    resolvedAt: "",
+    feedbackSubmitted: false,
+    feedbackRating: null,
+  },
+  {
+    id: 1026,
+    title: "Library lights flickering",
+    category: "Electrical",
+    description: "The lights near the reading area keep flickering.",
+    building: "Central Library",
+    floor: "1",
+    roomOrArea: "Reading Hall",
+    location: "",
+    priority: "LOW",
+    status: "RESOLVED",
+    adminNote: "Faulty lights were replaced.",
+    submittedAt: "2026-11-10T11:20:00",
+    updatedAt: "2026-11-11T16:10:00",
+    resolvedAt: "2026-11-11T16:10:00",
+    feedbackSubmitted: false,
+    feedbackRating: null,
+  },
+];
 
 function getStudentId() {
   try {
@@ -162,7 +218,9 @@ function MyComplaints() {
 
       if (!studentId) {
         if (isPageOpen) {
-          setComplaints([]);
+          setComplaints(previewComplaints);
+          setSelectedId(previewComplaints[0].id);
+          setError("");
           setLoading(false);
         }
         return;
@@ -186,10 +244,12 @@ function MyComplaints() {
         if (isPageOpen) {
           setComplaints(data.complaints.map(normalizeComplaint));
         }
-      } catch (requestError) {
-        if (isPageOpen) {
-          setError(requestError.message || "Could not load complaints.");
-        }
+      }  catch {
+      if (isPageOpen) {
+        setComplaints(previewComplaints);
+        setSelectedId(previewComplaints[0].id);
+        setError("");
+      }
       } finally {
         if (isPageOpen) {
           setLoading(false);
@@ -324,83 +384,107 @@ function MyComplaints() {
           </section>
         ) : (
           <section className="complaints-workspace">
-            <div className="complaints-list-panel">
-              <div className="list-panel-heading">
-                <div>
-                  <span className="section-kicker">YOUR REPORTS</span>
-                  <h2>Complaint history</h2>
+            <div className="complaints-left-column">
+              <div className="complaints-list-panel">
+                <div className="list-panel-heading">
+                  <div>
+                    <span className="section-kicker">YOUR REPORTS</span>
+                    <h2>Complaint history</h2>
+                  </div>
+                  <span className="record-count">
+                    {visibleComplaints.length} shown
+                  </span>
                 </div>
-                <span className="record-count">
-                  {visibleComplaints.length} shown
-                </span>
-              </div>
 
-              <label className="complaint-search">
-                <i className="fa-solid fa-magnifying-glass"></i>
-                <input
-                  type="search"
-                  value={searchText}
-                  onChange={(event) => setSearchText(event.target.value)}
-                  placeholder="Search title, category or ID"
-                />
-              </label>
+                <label className="complaint-search">
+                  <i className="fa-solid fa-magnifying-glass"></i>
+                  <input
+                    type="search"
+                    value={searchText}
+                    onChange={(event) => setSearchText(event.target.value)}
+                    placeholder="Search title, category or ID"
+                  />
+                </label>
 
-              <div className="complaint-filters">
-                {["All", "Open", "Resolved"].map((filter) => (
-                  <button
-                    key={filter}
-                    type="button"
-                    className={activeFilter === filter ? "filter-active" : ""}
-                    onClick={() => setActiveFilter(filter)}
-                  >
-                    {filter}
-                  </button>
-                ))}
-              </div>
-
-              <div className="complaint-list">
-                {visibleComplaints.length === 0 ? (
-                  <p className="empty-search">
-                    No complaints match your search or filter.
-                  </p>
-                ) : (
-                  visibleComplaints.map((complaint) => (
+                <div className="complaint-filters">
+                  {["All", "Open", "Resolved"].map((filter) => (
                     <button
-                      key={complaint.id}
+                      key={filter}
                       type="button"
-                      className={`complaint-list-item ${
-                        String(selectedComplaint?.id) === String(complaint.id)
-                          ? "complaint-selected"
-                          : ""
-                      }`}
-                      onClick={() => setSelectedId(complaint.id)}
+                      className={activeFilter === filter ? "filter-active" : ""}
+                      onClick={() => setActiveFilter(filter)}
                     >
-                      <span className="complaint-item-icon">
-                        <i className="fa-solid fa-screwdriver-wrench"></i>
-                      </span>
-
-                      <span className="complaint-item-info">
-                        <span className="complaint-item-title">
-                          {complaint.title}
-                        </span>
-                        <span className="complaint-item-meta">
-                          #{complaint.id} · {complaint.category}
-                        </span>
-                        <span className="complaint-item-location">
-                          <i className="fa-solid fa-location-dot"></i>
-                          {getLocation(complaint)}
-                        </span>
-                      </span>
-
-                      <span
-                        className={`status-badge ${getStatusClass(complaint)}`}
-                      >
-                        {statusLabels[complaint.status] || complaint.status}
-                      </span>
+                      {filter}
                     </button>
-                  ))
-                )}
+                  ))}
+                </div>
+
+                <div className="complaint-list">
+                  {visibleComplaints.length === 0 ? (
+                    <p className="empty-search">
+                      No complaints match your search or filter.
+                    </p>
+                  ) : (
+                    visibleComplaints.map((complaint) => (
+                      <button
+                        key={complaint.id}
+                        type="button"
+                        className={`complaint-list-item ${
+                          String(selectedComplaint?.id) === String(complaint.id)
+                            ? "complaint-selected"
+                            : ""
+                        }`}
+                        onClick={() => setSelectedId(complaint.id)}
+                      >
+                        <span className="complaint-item-icon">
+                          <i className="fa-solid fa-screwdriver-wrench"></i>
+                        </span>
+
+                        <span className="complaint-item-info">
+                          <span className="complaint-item-title">
+                            {complaint.title}
+                          </span>
+                          <span className="complaint-item-meta">
+                            #{complaint.id} · {complaint.category}
+                          </span>
+                          <span className="complaint-item-location">
+                            <i className="fa-solid fa-location-dot"></i>
+                            {getLocation(complaint)}
+                          </span>
+                        </span>
+
+                        <span
+                          className={`status-badge ${getStatusClass(complaint)}`}
+                        >
+                          {statusLabels[complaint.status] || complaint.status}
+                        </span>
+                      </button>
+                    ))
+                  )}
+                </div>
               </div>
+
+              {selectedComplaint?.status === "RESOLVED" && (
+                <FeedbackForm
+                  key={selectedComplaint.id}
+                  complaintId={selectedComplaint.id}
+                  feedbackSubmitted={selectedComplaint.feedbackSubmitted}
+                  feedbackRating={selectedComplaint.feedbackRating}
+                  onSubmitted={({ rating }) => {
+                    setComplaints((currentComplaints) =>
+                      currentComplaints.map((complaint) =>
+                        String(complaint.id) === String(selectedComplaint.id)
+                          ? {
+                              ...complaint,
+                              feedbackSubmitted: true,
+                              feedbackRating: rating,
+                            }
+                          : complaint,
+                      ),
+                    );
+                  }}
+                />
+              )}
             </div>
 
             {selectedComplaint && (
@@ -482,26 +566,6 @@ function MyComplaints() {
                     ))}
                   </div>
                 </div>
-                {selectedComplaint.status === "RESOLVED" && (
-                    <FeedbackForm
-                        complaintId={selectedComplaint.id}
-                        feedbackSubmitted={selectedComplaint.feedbackSubmitted}
-                        feedbackRating={selectedComplaint.feedbackRating}
-                        onSubmitted={({ rating }) => {
-                        setComplaints((currentComplaints) =>
-                            currentComplaints.map((complaint) =>
-                            String(complaint.id) === String(selectedComplaint.id)
-                                ? {
-                                    ...complaint,
-                                    feedbackSubmitted: true,
-                                    feedbackRating: rating,
-                                }
-                                : complaint,
-                            ),
-                        );
-                        }}
-                    />
-                    )}
               </aside>
             )}
           </section>

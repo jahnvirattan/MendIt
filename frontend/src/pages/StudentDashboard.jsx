@@ -185,7 +185,7 @@ const StudentDashboard = () => {
 
               <button
                 className="complaint-arrow"
-                onClick={() => navigate("/trackComplaint")}
+                onClick={() => navigate("/myComplaints")}
                 aria-label={`Track ${complaint.id}`}
               >
                 ›
@@ -203,6 +203,12 @@ const StudentDashboard = () => {
             <h2>Complaint Progress Tracker</h2>
             <p>MEND-0008 · Projector not working</p>
           </div>
+          <button
+            className="track-button"
+            onClick={() => navigate("/myComplaints")}
+          >
+            Track Your Complaint
+          </button>
         </div>
 
         <div className="progress-steps">
