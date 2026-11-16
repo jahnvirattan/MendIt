@@ -23,8 +23,10 @@
 ================================ */
 
 .sidebar {
-  width: 260px;
-  min-width: 260px;
+  /* width: 260px;
+  min-width: 260px; */
+  width: 235px;
+  min-width: 235px;
   height: 100vh;
   position: sticky;
   top: 0;
@@ -57,9 +59,13 @@
 /* COLLAPSED SIDEBAR */
 
 .sidebar.collapsed {
-  width: 82px;
+  /* width: 82px;
   min-width: 82px;
   padding: 18px 10px 22px;
+   */
+  width: 70px;
+  min-width: 70px;
+  padding: 18px 8px 22px;
 }
 
 /* ================================
@@ -295,7 +301,7 @@
 ================================ */
 
 @media (max-width: 600px) {
-  .sidebar.expanded {
+  /* .sidebar.expanded {
     width: 230px;
     min-width: 230px;
   }
@@ -303,6 +309,16 @@
   .sidebar.collapsed {
     width: 72px;
     min-width: 72px;
+  } */
+
+  .sidebar.expanded {
+    width: 220px;
+    min-width: 220px;
+  }
+
+  .sidebar.collapsed {
+    width: 65px;
+    min-width: 65px;
   }
 
   .dashboard-content {
