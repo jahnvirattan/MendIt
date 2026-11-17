@@ -15,6 +15,10 @@ CREATE TABLE IF NOT EXISTS users (
     UNIQUE (email),
     UNIQUE (roll_number)
 );
+-- adding two columns for student portal.
+alter table users
+add column mobile varchar(10) null,
+add column semester TINYINT null;
 
 CREATE TABLE IF NOT EXISTS complaints (
     complaint_id INT NOT NULL AUTO_INCREMENT,
@@ -76,3 +80,4 @@ VALUES
     (1, 1, 5, 'The issue was fixed quickly.'),
     (2, 3, 4, 'The lights are working properly now.'),
     (3, 5, 5, 'The area was cleaned the same day.');
+
