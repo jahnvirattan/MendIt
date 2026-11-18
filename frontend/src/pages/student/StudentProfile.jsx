@@ -8,6 +8,8 @@ const previewProfile = {
   roll_number: "DEMO004",
   department: "Computer Science",
   created_at: "2025-08-15T00:00:00",
+  mobile: "9876543210",
+  semester: 2,
 };
 
 function getStudentId() {
@@ -339,6 +341,23 @@ function StudentProfile() {
                   onChange={handleChange}
                   readOnly={!editing}
                   maxLength="100"
+                />
+              </label>
+              <label className="profile-field">
+                <span>Mobile number</span>
+                <input
+                  type="tel"
+                  value={profile?.mobile || ""}
+                  readOnly
+                />
+              </label>
+
+              <label className="profile-field">
+                <span>Semester</span>
+                <input
+                  type="text"
+                  value={profile?.semester ? `Semester ${profile.semester}` : ""}
+                  readOnly
                 />
               </label>
             </div>
