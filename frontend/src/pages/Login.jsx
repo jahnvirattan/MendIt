@@ -44,7 +44,7 @@ const Login = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: "include",
+        // credentials: "include",
         body: JSON.stringify(
           activeRole === "student"
             ? {
@@ -68,12 +68,12 @@ const Login = () => {
 
       sessionStorage.setItem(
         activeRole === "student" ? "student" : "admin",
-        JSON.stringify(data.user),
+        JSON.stringify(data.data.user),
       );
 
       navigate(
-      activeRole === "student" ? "/studentDashboard" : "/adminDashboard"
-    );
+        activeRole === "student" ? "/studentDashboard" : "/adminDashboard",
+      );
     } catch (err) {
       setError(err.message || "Something went wrong. Please try again.");
     } finally {

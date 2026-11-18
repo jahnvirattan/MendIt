@@ -7,7 +7,9 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
 public class Api implements HttpHandler {
-
+    // Handles student registration and login API requests.
+    private final StudentAuthHandler studentAuthHandler =
+            new StudentAuthHandler();
     @Override
     public void handle(HttpExchange exchange) throws IOException {
 
@@ -23,19 +25,40 @@ public class Api implements HttpHandler {
         exchange.getResponseHeaders().set(
                 "Access-Control-Allow-Headers", "Content-Type"
         );
-
+// Allow credentialed requests from the React frontend
+        exchange.getResponseHeaders().set(
+                "Access-Control-Allow-Credentials", "true"
+        );
         exchange.getResponseHeaders().set(
                 "Content-Type", "application/json; charset=UTF-8"
         );
 
         String method = exchange.getRequestMethod();
-
-        // Handle browser CORS preflight requests
+        // Get the requested API URL.
+        String path = exchange.getRequestURI().getPath();
+// Handle browser CORS preflight requests
         if (method.equalsIgnoreCase("OPTIONS")) {
             exchange.sendResponseHeaders(204, -1);
             exchange.close();
             return;
         }
+// Handle student registration requests.
+        if (method.equalsIgnoreCase("POST")
+                && path.equals("/api/auth/register")) {
+
+            studentAuthHandler.handleStudentRegistration(exchange);
+            return;
+        }
+
+// Handle student login requests.
+        if (method.equalsIgnoreCase("POST")
+                && path.equals("/api/auth/login")) {
+
+            studentAuthHandler.handleStudentLogin(exchange);
+            return;
+        }
+
+
 
         String response;
 

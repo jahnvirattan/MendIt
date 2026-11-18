@@ -16,7 +16,12 @@ public class DBConnection {
         if (user == null || password == null) {
             throw new SQLException("Database credentials are not configured.");
         }
-
+        // Explicitly load the MySQL JDBC driver
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new SQLException("MySQL JDBC driver not found.", e);
+        }
         return DriverManager.getConnection(URL, user, password);
     }
 }
