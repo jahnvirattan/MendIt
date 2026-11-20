@@ -13,6 +13,7 @@
 
 # Package Files #
 *.jar
+!backend/MendItBackEnd/lib/*.jar
 *.war
 *.nar
 *.ear
@@ -27,3 +28,7 @@ replay_pid*
 
 # Maven generated files
 target/
+# Environment variables and secrets
+.env
+.env.*
+!.env.example

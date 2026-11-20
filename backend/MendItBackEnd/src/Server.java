@@ -2,6 +2,7 @@
 import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.concurrent.CountDownLatch;
 
 public class Server {
 
@@ -9,8 +10,7 @@ public class Server {
 
         try {
             HttpServer server = HttpServer.create(
-                    new InetSocketAddress(8080), 0
-            );
+                    new InetSocketAddress(8080), 0);
 
             server.createContext("/api", new Api());
 
@@ -25,9 +25,16 @@ public class Server {
             System.out.println("API available at: http://localhost:8080/api");
             System.out.println("================================");
 
+            // Keep the Java application alive.
+            new CountDownLatch(1).await();
+
         } catch (IOException e) {
             System.out.println("Could not start MendIt server.");
             e.printStackTrace();
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            System.out.println("MendIt server was interrupted.");
         }
     }
 }

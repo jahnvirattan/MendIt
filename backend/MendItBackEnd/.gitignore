@@ -28,3 +28,12 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+# VS Code Java temporary build files
+vscode-build/
+sources.txt
+
+# IntelliJ project files
+*.iml
+
+# Maven backup
+pom.xml.backup
