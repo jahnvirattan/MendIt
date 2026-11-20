@@ -98,17 +98,6 @@ function AllComplaints() {
     });
   }, [complaints, searchTerm, statusFilter, priorityFilter]);
 
-  const pendingCount = complaints.filter((complaint) =>
-    ["SUBMITTED", "UNDER_REVIEW"].includes(complaint.status)
-  ).length;
-
-  const inProgressCount = complaints.filter(
-    (complaint) => complaint.status === "IN_PROGRESS"
-  ).length;
-
-  const resolvedCount = complaints.filter(
-    (complaint) => complaint.status === "RESOLVED"
-  ).length;
 
   const formatStatus = (status) =>
     status.replaceAll("_", " ").toLowerCase().replace(/\b\w/g, (letter) =>
@@ -136,39 +125,7 @@ function AllComplaints() {
         <div className="admin-header-icon">🔧</div>
       </header>
 
-      <section className="complaint-stats">
-        <div className="complaint-stat-card stat-total">
-          <span className="stat-icon">▤</span>
-          <div>
-            <h2>{complaints.length}</h2>
-            <p>Total Complaints</p>
-          </div>
-        </div>
-
-        <div className="complaint-stat-card stat-pending">
-          <span className="stat-icon">◷</span>
-          <div>
-            <h2>{pendingCount}</h2>
-            <p>Pending Review</p>
-          </div>
-        </div>
-
-        <div className="complaint-stat-card stat-progress">
-          <span className="stat-icon">⚙</span>
-          <div>
-            <h2>{inProgressCount}</h2>
-            <p>In Progress</p>
-          </div>
-        </div>
-
-        <div className="complaint-stat-card stat-resolved">
-          <span className="stat-icon">✓</span>
-          <div>
-            <h2>{resolvedCount}</h2>
-            <p>Resolved</p>
-          </div>
-        </div>
-      </section>
+      
 
       <section className="complaints-list-panel">
         <div className="complaints-list-heading">
