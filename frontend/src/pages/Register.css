@@ -4,9 +4,9 @@
   width: 100%;
   min-height: 100vh;
   display: flex;
-  align-items: stretch;
+  align-items: center;
   justify-content: center;
-  padding: 30px 20px;
+  padding: 24px;
   margin: 0;
   background: #f9f6ed;
   font-family: "Segoe UI", sans-serif;
@@ -18,9 +18,8 @@
 /* ===== Left Branding Section ===== */
 
 .register-branding {
-  width: 43%;
-  max-width: 490px;
-  min-height: calc(100vh - 60px);
+  width: 48%;
+  min-height: calc(100vh - 48px);
   position: relative;
   overflow: hidden;
   display: flex;
@@ -154,9 +153,8 @@
 /* ===== Registration Container ===== */
 
 .register-container {
-  width: 100%;
-  max-width: 650px;
-  height: calc(100vh - 60px);
+  width: 52%;
+  height: calc(100vh - 48px);
   min-height: 650px;
   max-height: 950px;
   overflow-y: auto;
@@ -448,16 +446,16 @@
 
 @media (max-width: 1050px) {
   .register-page {
-    padding: 24px 15px;
+    padding: 20px;
   }
 
   .register-branding {
-    width: 40%;
+    width: 48%;
     padding: 30px 22px;
   }
 
   .register-container {
-    max-width: 650px;
+    width: 52%;
     padding: 30px 28px;
   }
 
@@ -470,13 +468,12 @@
   .register-page {
     flex-direction: column;
     align-items: center;
-    padding: 24px 15px;
+    padding: 15px;
     gap: 0;
   }
 
   .register-branding {
     width: 100%;
-    max-width: 560px;
     height: 260px;
     min-height: 260px;
     padding: 20px;
@@ -526,7 +523,6 @@
 
   .register-container {
     width: 100%;
-    max-width: 560px;
     height: auto;
     min-height: unset;
     max-height: none;
@@ -544,7 +540,7 @@
 
 @media (max-width: 480px) {
   .register-page {
-    padding: 16px 12px;
+    padding: 10px;
   }
 
   .register-branding {
