@@ -32,3 +32,5 @@ target/
 .env
 .env.*
 !.env.example
+
+backend/MendItBackEnd/.env
