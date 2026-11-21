@@ -1,84 +1,92 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./AdminDashboard.css";
 
 function AdminDashboard() {
   const [search, setSearch] = useState("");
 
-  // Sample complaints
-  const complaints = [
-    {
-      id: "MD101",
-      title: "Broken classroom projector",
-      category: "Electrical",
-      location: "Block A - Room 204",
-      status: "Pending",
-      priority: "High",
-    },
-    {
-      id: "MD102",
-      title: "Water leakage in washroom",
-      category: "Plumbing",
-      location: "Block B - Washroom",
-      status: "In Progress",
-      priority: "Medium",
-    },
-    {
-      id: "MD103",
-      title: "Damaged classroom chairs",
-      category: "Furniture",
-      location: "Block C - Room 101",
-      status: "Resolved",
-      priority: "Low",
-    },
-    {
-      id: "MD104",
-      title: "Corridor lights not working",
-      category: "Electrical",
-      location: "Block A - Second Floor",
-      status: "Pending",
-      priority: "Medium",
-    },
-  ];
+  const [complaints, setComplaints] = useState([]);
+
+  const [stats, setStats] = useState({
+    total: 0,
+    pending: 0,
+    progress: 0,
+    resolved: 0,
+    highPriority: 0,
+    mediumPriority: 0,
+    lowPriority: 0,
+    urgentPriority: 0,
+  });
+
+  const [categoryCounts, setCategoryCounts] = useState([]);
+
+  // Fetch dashboard data from Java backend
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        // Fetch dashboard statistics
+        const statsResponse = await fetch(
+          "http://localhost:8080/api/admin/dashboard"
+        );
+
+        // Fetch recent complaints
+        const complaintsResponse = await fetch(
+          "http://localhost:8080/api/admin/recent-complaints"
+        );
+
+        // Fetch category reports
+        const categoryResponse = await fetch(
+          "http://localhost:8080/api/admin/reports/categories"
+        );
+
+        const statsData = await statsResponse.json();
+        const complaintsData = await complaintsResponse.json();
+        const categoryData = await categoryResponse.json();
+
+        if (
+          !statsResponse.ok ||
+          !complaintsResponse.ok ||
+          !categoryResponse.ok
+        ) {
+          throw new Error("Failed to fetch dashboard data");
+        }
+
+        if (
+          !statsData.success ||
+          !complaintsData.success ||
+          !categoryData.success
+        ) {
+          throw new Error("Backend could not return dashboard data");
+        }
+
+        setStats({
+          ...statsData.data,
+          urgentPriority: statsData.data.urgentPriority || 0,
+        });
+
+        setComplaints(complaintsData.data);
+        setCategoryCounts(categoryData.data);
+
+      } catch (error) {
+        console.error("Dashboard Error:", error);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
 
   // Dashboard statistics
-  const total = complaints.length;
-
-  const pending = complaints.filter(
-    (c) => c.status === "Pending"
-  ).length;
-
-  const progress = complaints.filter(
-    (c) => c.status === "In Progress"
-  ).length;
-
-  const resolved = complaints.filter(
-    (c) => c.status === "Resolved"
-  ).length;
+  const total = stats.total;
+  const pending = stats.pending;
+  const progress = stats.progress;
+  const resolved = stats.resolved;
 
   // Priority statistics
-  const highPriority = complaints.filter(
-    (c) => c.priority === "High" && c.status !== "Resolved"
-  ).length;
-
-  const mediumPriority = complaints.filter(
-    (c) => c.priority === "Medium" && c.status !== "Resolved"
-  ).length;
-
-  const lowPriority = complaints.filter(
-    (c) => c.priority === "Low" && c.status !== "Resolved"
-  ).length;
-
-  // Category statistics
-  const categories = ["Electrical", "Plumbing", "Furniture", "Other"];
-
-  const categoryCounts = categories.map((category) => ({
-    name: category,
-    count: complaints.filter(
-      (c) => c.category === category
-    ).length,
-  }));
+  const highPriority = stats.highPriority;
+  const mediumPriority = stats.mediumPriority;
+  const lowPriority = stats.lowPriority;
+  const urgentPriority = stats.urgentPriority;
 
   // Search complaints
   const filteredComplaints = complaints.filter((c) =>
@@ -92,21 +100,21 @@ function AdminDashboard() {
     {
       icon: "＋",
       title: "New complaint submitted",
-      detail: "MD101 · Broken classroom projector",
+      detail: "Recent complaint activity",
       time: "Recently",
       type: "blue",
     },
     {
       icon: "↻",
       title: "Complaint under progress",
-      detail: "MD102 · Water leakage",
+      detail: "Complaint status updated",
       time: "Recently",
       type: "gold",
     },
     {
       icon: "✓",
       title: "Complaint resolved",
-      detail: "MD103 · Damaged classroom chairs",
+      detail: "Complaint marked as resolved",
       time: "Recently",
       type: "green",
     },
@@ -265,6 +273,15 @@ function AdminDashboard() {
               </div>
               <h2>{lowPriority}</h2>
               <p>Can be handled routinely</p>
+            </div>
+
+            <div className="priority-card">
+              <div className="priority-heading">
+                <span className="priority-dot urgent"></span>
+                Urgent Priority
+              </div>
+              <h2>{urgentPriority}</h2>
+              <p>Requires immediate action</p>
             </div>
 
           </div>

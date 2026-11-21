@@ -2,7 +2,11 @@
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -20,10 +24,21 @@ public class Api implements HttpHandler {
     private final StudentDashboardHandler studentDashboardHandler =
             new StudentDashboardHandler();
 
+    // Admin dashboard
+    private final AdminDashboard adminDashboard =
+            new AdminDashboard();
+
+    // Complaint reports
+    private final ComplaintReports complaintReports =
+            new ComplaintReports();
+
+    // Convert Java data into JSON
+    private final ObjectMapper mapper = new ObjectMapper();
+
     @Override
     public void handle(HttpExchange exchange) throws IOException {
 
-        // Allow React frontend to communicate with Java backend
+        // CORS settings
         exchange.getResponseHeaders().set(
                 "Access-Control-Allow-Origin", "http://localhost:5173");
 
@@ -43,7 +58,7 @@ public class Api implements HttpHandler {
         String method = exchange.getRequestMethod();
         String path = exchange.getRequestURI().getPath();
 
-        // Handle browser CORS preflight requests
+        // CORS preflight
         if (method.equalsIgnoreCase("OPTIONS")) {
             exchange.sendResponseHeaders(204, -1);
             exchange.close();
@@ -90,12 +105,93 @@ public class Api implements HttpHandler {
             return;
         }
 
-        // DEFAULT RESPONSE
-        String response;
+        // ADMIN DASHBOARD STATISTICS
+        if (method.equalsIgnoreCase("GET")
+                && path.equals("/api/admin/dashboard")) {
 
+            try {
+                Map<String, Object> response = new HashMap<>();
+
+                response.put("success", true);
+                response.put("data", adminDashboard.getStatistics());
+
+                sendJson(exchange, 200, response);
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+                sendError(exchange);
+            }
+
+            return;
+        }
+
+        // RECENT COMPLAINTS
+        if (method.equalsIgnoreCase("GET")
+                && path.equals("/api/admin/recent-complaints")) {
+
+            try {
+                Map<String, Object> response = new HashMap<>();
+
+                response.put("success", true);
+                response.put("data",
+                        adminDashboard.getRecentComplaints());
+
+                sendJson(exchange, 200, response);
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+                sendError(exchange);
+            }
+
+            return;
+        }
+
+        // CATEGORY REPORTS
+        if (method.equalsIgnoreCase("GET")
+                && path.equals("/api/admin/reports/categories")) {
+
+            try {
+                Map<String, Object> response = new HashMap<>();
+
+                response.put("success", true);
+                response.put("data",
+                        complaintReports.getCategoryReports());
+
+                sendJson(exchange, 200, response);
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+                sendError(exchange);
+            }
+
+            return;
+        }
+
+        // STATUS REPORTS
+        if (method.equalsIgnoreCase("GET")
+                && path.equals("/api/admin/reports/status")) {
+
+            try {
+                Map<String, Object> response = new HashMap<>();
+
+                response.put("success", true);
+                response.put("data",
+                        complaintReports.getStatusReports());
+
+                sendJson(exchange, 200, response);
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+                sendError(exchange);
+            }
+
+            return;
+        }
+
+        // DEFAULT RESPONSE
         if (method.equalsIgnoreCase("GET")) {
 
-            response = """
+            String response = """
                     {
                         "success": true,
                         "message": "Welcome to MendIt API!"
@@ -106,7 +202,7 @@ public class Api implements HttpHandler {
 
         } else {
 
-            response = """
+            String response = """
                     {
                         "success": false,
                         "message": "This API request is not supported yet."
@@ -117,7 +213,36 @@ public class Api implements HttpHandler {
         }
     }
 
-    // Send response to frontend
+    // Send Java objects as JSON
+    private void sendJson(
+            HttpExchange exchange,
+            int statusCode,
+            Object data
+    ) throws IOException {
+
+        byte[] responseBytes = mapper.writeValueAsBytes(data);
+
+        exchange.sendResponseHeaders(
+                statusCode, responseBytes.length);
+
+        try (OutputStream output = exchange.getResponseBody()) {
+            output.write(responseBytes);
+        }
+    }
+
+    // Send database error
+    private void sendError(HttpExchange exchange)
+            throws IOException {
+
+        Map<String, Object> response = new HashMap<>();
+
+        response.put("success", false);
+        response.put("message", "Unable to fetch dashboard data.");
+
+        sendJson(exchange, 500, response);
+    }
+
+    // Send normal text response
     private void sendResponse(
             HttpExchange exchange,
             int statusCode,
