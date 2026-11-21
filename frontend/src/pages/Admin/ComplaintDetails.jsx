@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./ComplaintDetails.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+
 function ComplaintDetails() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -12,6 +13,8 @@ function ComplaintDetails() {
   const [status, setStatus] = useState(complaint?.status || "SUBMITTED");
   const [priority, setPriority] = useState(complaint?.priority || "MEDIUM");
   const [adminNote, setAdminNote] = useState(complaint?.admin_note || "");
+
+  const [saving, setSaving] = useState(false);
 
   if (!complaint) {
     return (
@@ -32,12 +35,95 @@ function ComplaintDetails() {
       letter.toUpperCase()
     );
 
-  const handleSave = (event) => {
+  const handleSave = async (event) => {
     event.preventDefault();
 
-    // Temporary frontend save.
-    // Later, this will update the complaint through the Java backend.
-    alert("Complaint details updated successfully!");
+    try {
+      setSaving(true);
+
+      // 1. Update complaint status
+      const statusResponse = await fetch(
+        "http://localhost:8080/api/admin/complaints/status",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            complaintId: complaint.complaint_id,
+            status: status,
+          }),
+        }
+      );
+
+      const statusResult = await statusResponse.json();
+
+      if (!statusResponse.ok || !statusResult.success) {
+        throw new Error(statusResult.message || "Status update failed.");
+      }
+
+      // 2. Update complaint priority
+      const priorityResponse = await fetch(
+        "http://localhost:8080/api/admin/complaints/priority",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            complaintId: complaint.complaint_id,
+            priority: priority,
+          }),
+        }
+      );
+
+      const priorityResult = await priorityResponse.json();
+
+      if (!priorityResponse.ok || !priorityResult.success) {
+        throw new Error(priorityResult.message || "Priority update failed.");
+      }
+
+      // 3. Save admin note
+      const noteResponse = await fetch(
+        "http://localhost:8080/api/admin/complaints/note",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            complaintId: complaint.complaint_id,
+            adminNote: adminNote,
+          }),
+        }
+      );
+
+      const noteResult = await noteResponse.json();
+
+      if (!noteResponse.ok || !noteResult.success) {
+        throw new Error(noteResult.message || "Admin note update failed.");
+      }
+
+      // Update the complaint object for navigation state
+      const updatedComplaint = {
+        ...complaint,
+        status: status,
+        priority: priority,
+        admin_note: adminNote,
+      };
+
+      alert("Complaint details updated successfully!");
+
+      navigate("/admin/complaints", {
+        state: { updatedComplaint },
+      });
+
+    } catch (error) {
+      console.error("Error updating complaint:", error);
+      alert(error.message || "Something went wrong while saving changes.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -65,7 +151,6 @@ function ComplaintDetails() {
 
         <div className="details-layout">
 
-          {/* Complaint information */}
           <section className="details-card">
             <div className="details-card-heading">
               <div>
@@ -115,7 +200,7 @@ function ComplaintDetails() {
 
               <div className="info-item">
                 <span>Submitted On</span>
-                <strong>{complaint.submitted_at}</strong>
+                <strong>{complaint.submitted_at || "Not available"}</strong>
               </div>
 
               <div className="info-item">
@@ -143,7 +228,6 @@ function ComplaintDetails() {
             )}
           </section>
 
-          {/* Admin update panel */}
           <aside className="update-card">
             <div className="update-card-heading">
               <span className="update-icon">⚙</span>
@@ -203,14 +287,18 @@ function ComplaintDetails() {
                 />
               </div>
 
-              <button type="submit" className="save-details-button">
-                Save Changes <i className="fa-solid fa-arrow-right"></i>
+              <button
+                type="submit"
+                className="save-details-button"
+                disabled={saving}
+              >
+                {saving ? "Saving..." : "Save Changes"}
+                {!saving && <i className="fa-solid fa-arrow-right"></i>}
               </button>
             </form>
 
             <p className="update-note">
-              Changes are currently temporary and will be connected to the
-              database during backend integration.
+              Your changes are saved to the MendIt database.
             </p>
           </aside>
 

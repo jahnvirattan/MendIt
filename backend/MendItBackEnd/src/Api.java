@@ -1,4 +1,3 @@
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
@@ -13,24 +12,22 @@ import com.sun.net.httpserver.HttpHandler;
 public class Api implements HttpHandler {
 
     // Student authentication
-    private final StudentAuthHandler studentAuthHandler =
-            new StudentAuthHandler();
+    private final StudentAuthHandler studentAuthHandler = new StudentAuthHandler();
 
     // Admin authentication
-    private final AdminAuthHandler adminAuthHandler =
-            new AdminAuthHandler();
+    private final AdminAuthHandler adminAuthHandler = new AdminAuthHandler();
 
     // Student dashboard
-    private final StudentDashboardHandler studentDashboardHandler =
-            new StudentDashboardHandler();
+    private final StudentDashboardHandler studentDashboardHandler = new StudentDashboardHandler();
 
     // Admin dashboard
-    private final AdminDashboard adminDashboard =
-            new AdminDashboard();
+    private final AdminDashboard adminDashboard = new AdminDashboard();
 
     // Complaint reports
-    private final ComplaintReports complaintReports =
-            new ComplaintReports();
+    private final ComplaintReports complaintReports = new ComplaintReports();
+
+    // Admin complaint management
+    private final ComplaintHandler complaintHandler = new ComplaintHandler();
 
     // Convert Java data into JSON
     private final ObjectMapper mapper = new ObjectMapper();
@@ -188,6 +185,42 @@ public class Api implements HttpHandler {
             return;
         }
 
+        // =====================================
+        // ADMIN COMPLAINT MANAGEMENT
+        // =====================================
+
+        // GET ALL STUDENT COMPLAINTS
+        if (method.equalsIgnoreCase("GET")
+                && path.equals("/api/admin/complaints")) {
+
+            complaintHandler.getAllComplaints(exchange);
+            return;
+        }
+
+        // UPDATE COMPLAINT STATUS
+        if (method.equalsIgnoreCase("POST")
+                && path.equals("/api/admin/complaints/status")) {
+
+            complaintHandler.updateStatus(exchange);
+            return;
+        }
+
+        // UPDATE COMPLAINT PRIORITY
+        if (method.equalsIgnoreCase("POST")
+                && path.equals("/api/admin/complaints/priority")) {
+
+            complaintHandler.updatePriority(exchange);
+            return;
+        }
+
+        // ADD ADMIN NOTE
+        if (method.equalsIgnoreCase("POST")
+                && path.equals("/api/admin/complaints/note")) {
+
+            complaintHandler.addAdminNote(exchange);
+            return;
+        }
+
         // DEFAULT RESPONSE
         if (method.equalsIgnoreCase("GET")) {
 
@@ -217,8 +250,7 @@ public class Api implements HttpHandler {
     private void sendJson(
             HttpExchange exchange,
             int statusCode,
-            Object data
-    ) throws IOException {
+            Object data) throws IOException {
 
         byte[] responseBytes = mapper.writeValueAsBytes(data);
 
@@ -246,11 +278,9 @@ public class Api implements HttpHandler {
     private void sendResponse(
             HttpExchange exchange,
             int statusCode,
-            String response
-    ) throws IOException {
+            String response) throws IOException {
 
-        byte[] responseBytes =
-                response.getBytes(StandardCharsets.UTF_8);
+        byte[] responseBytes = response.getBytes(StandardCharsets.UTF_8);
 
         exchange.sendResponseHeaders(
                 statusCode, responseBytes.length);

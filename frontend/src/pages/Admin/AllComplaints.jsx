@@ -1,81 +1,69 @@
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./AllComplaints.css";
-
-// Temporary sample data.
-// Later, we'll replace this with complaints from the Java backend.
-const sampleComplaints = [
-  {
-    complaint_id: 1024,
-    student_name: "Aarav Sharma",
-    title: "Leaking tap in Block B",
-    category: "Plumbing",
-    building: "Block B",
-    floor: "2nd Floor",
-    room_or_area: "Washroom",
-    priority: "HIGH",
-    status: "IN_PROGRESS",
-    submitted_at: "2026-11-14",
-  },
-  {
-    complaint_id: 1023,
-    student_name: "Priya Verma",
-    title: "Flickering lights in Library",
-    category: "Electrical",
-    building: "Central Library",
-    floor: "1st Floor",
-    room_or_area: "Reading Hall",
-    priority: "MEDIUM",
-    status: "UNDER_REVIEW",
-    submitted_at: "2026-11-13",
-  },
-  {
-    complaint_id: 1018,
-    student_name: "Rohan Mehta",
-    title: "AC not working in Seminar Hall",
-    category: "Electrical",
-    building: "Academic Block",
-    floor: "Ground Floor",
-    room_or_area: "Seminar Hall",
-    priority: "URGENT",
-    status: "RESOLVED",
-    submitted_at: "2026-11-12",
-  },
-  {
-    complaint_id: 1017,
-    student_name: "Meera Singh",
-    title: "Broken classroom window",
-    category: "Infrastructure",
-    building: "Block A",
-    floor: "3rd Floor",
-    room_or_area: "Room 305",
-    priority: "LOW",
-    status: "SUBMITTED",
-    submitted_at: "2026-11-11",
-  },
-  {
-    complaint_id: 1015,
-    student_name: "Kabir Malhotra",
-    title: "Water cooler not working",
-    category: "Water Supply",
-    building: "Block C",
-    floor: "Ground Floor",
-    room_or_area: "Near Room 012",
-    priority: "HIGH",
-    status: "ON_HOLD",
-    submitted_at: "2026-11-10",
-  },
-];
 
 function AllComplaints() {
   const navigate = useNavigate();
 
-  const [complaints] = useState(sampleComplaints);
+  const [complaints, setComplaints] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [priorityFilter, setPriorityFilter] = useState("ALL");
 
+  // Fetch complaints from Java backend
+  useEffect(() => {
+    const fetchComplaints = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const response = await fetch(
+          "http://localhost:8080/api/admin/complaints"
+        );
+
+        if (!response.ok) {
+          throw new Error("Unable to fetch complaints.");
+        }
+
+        const result = await response.json();
+
+        if (!result.success) {
+          throw new Error("Failed to load complaints.");
+        }
+
+        // Convert Java response fields into React-friendly fields
+        const formattedComplaints = result.data.map((complaint) => ({
+          complaint_id: complaint.complaintId,
+          student_id: complaint.studentId,
+          student_name: `Student #${complaint.studentId}`,
+          title: complaint.title,
+          description: complaint.description,
+          category: complaint.category,
+          building: complaint.building,
+          room_or_area: complaint.room,
+          priority: complaint.priority,
+          status: complaint.status,
+          admin_note: complaint.adminNote,
+        }));
+
+        setComplaints(formattedComplaints);
+
+      } catch (err) {
+        console.error("Error fetching complaints:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchComplaints();
+  }, []);
+
+  // Search and filter complaints
   const filteredComplaints = useMemo(() => {
     return complaints.filter((complaint) => {
       const search = searchTerm.toLowerCase();
@@ -98,7 +86,6 @@ function AllComplaints() {
     });
   }, [complaints, searchTerm, statusFilter, priorityFilter]);
 
-
   const formatStatus = (status) =>
     status.replaceAll("_", " ").toLowerCase().replace(/\b\w/g, (letter) =>
       letter.toUpperCase()
@@ -107,6 +94,7 @@ function AllComplaints() {
   const formatPriority = (priority) =>
     priority.charAt(0) + priority.slice(1).toLowerCase();
 
+  // Open individual complaint details
   const openComplaint = (complaint) => {
     navigate(`/admin/complaints/${complaint.complaint_id}`, {
       state: { complaint },
@@ -125,14 +113,13 @@ function AllComplaints() {
         <div className="admin-header-icon">🔧</div>
       </header>
 
-      
-
       <section className="complaints-list-panel">
         <div className="complaints-list-heading">
           <div>
             <h2>Complaint Records</h2>
             <p>View and manage complaints submitted by students.</p>
           </div>
+
           <span className="records-count">
             {filteredComplaints.length} records
           </span>
@@ -189,7 +176,19 @@ function AllComplaints() {
             </thead>
 
             <tbody>
-              {filteredComplaints.length > 0 ? (
+              {loading ? (
+                <tr>
+                  <td colSpan="6" className="no-complaints">
+                    Loading complaints...
+                  </td>
+                </tr>
+              ) : error ? (
+                <tr>
+                  <td colSpan="6" className="no-complaints">
+                    {error}
+                  </td>
+                </tr>
+              ) : filteredComplaints.length > 0 ? (
                 filteredComplaints.map((complaint) => (
                   <tr key={complaint.complaint_id}>
                     <td>
@@ -211,13 +210,17 @@ function AllComplaints() {
                     </td>
 
                     <td>
-                      <span className={`priority-badge priority-${complaint.priority.toLowerCase()}`}>
+                      <span
+                        className={`priority-badge priority-${complaint.priority.toLowerCase()}`}
+                      >
                         {formatPriority(complaint.priority)}
                       </span>
                     </td>
 
                     <td>
-                      <span className={`status-badge status-${complaint.status.toLowerCase()}`}>
+                      <span
+                        className={`status-badge status-${complaint.status.toLowerCase()}`}
+                      >
                         {formatStatus(complaint.status)}
                       </span>
                     </td>
