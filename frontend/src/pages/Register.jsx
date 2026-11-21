@@ -6,8 +6,10 @@ const Register = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [activeRole, setActiveRole] = useState("student");
-  //activeRole = location.state?.role || "student";
+  const [activeRole, setActiveRole] = useState(
+    location.state?.role || "student"
+  );
+
   const [formData, setFormData] = useState({
     fullName: "",
     rollNumber: "",
@@ -49,6 +51,7 @@ const Register = () => {
     setError("");
     setSuccess("");
 
+    // Check common required fields
     if (
       !formData.fullName.trim() ||
       !formData.email.trim() ||
@@ -60,6 +63,7 @@ const Register = () => {
       return;
     }
 
+    // Check role-specific fields
     if (activeRole === "student") {
       if (
         !formData.rollNumber.trim() ||
@@ -80,21 +84,25 @@ const Register = () => {
       }
     }
 
-    if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
+    // Email validation
+    if (!/^\S+@\S+\.\S+$/.test(formData.email.trim())) {
       setError("Please enter a valid email address.");
       return;
     }
 
-    if (!/^\d{10}$/.test(formData.mobile)) {
+    // Mobile number validation
+    if (!/^\d{10}$/.test(formData.mobile.trim())) {
       setError("Please enter a valid 10-digit mobile number.");
       return;
     }
 
+    // Password validation
     if (formData.password.length < 8) {
       setError("Password must be at least 8 characters long.");
       return;
     }
 
+    // Confirm password validation
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match.");
       return;
@@ -103,30 +111,37 @@ const Register = () => {
     try {
       setLoading(true);
 
-      const payload =
-        activeRole === "student"
-          ? {
-              role: "student",
-              fullName: formData.fullName.trim(),
-              rollNumber: formData.rollNumber.trim(),
-              email: formData.email.trim(),
-              mobile: formData.mobile,
-              department: formData.department,
-              semester: formData.semester,
-              password: formData.password,
-            }
-          : {
-              role: "admin",
-              fullName: formData.fullName.trim(),
-              adminId: formData.adminId.trim(),
-              email: formData.email.trim(),
-              mobile: formData.mobile,
-              designation: formData.designation,
-              invitationCode: formData.invitationCode,
-              password: formData.password,
-            };
+      const isStudent = activeRole === "student";
 
-      const response = await fetch("http://localhost:8080/api/auth/register", {
+      // Prepare registration data
+      const payload = isStudent
+        ? {
+            role: "student",
+            fullName: formData.fullName.trim(),
+            rollNumber: formData.rollNumber.trim(),
+            email: formData.email.trim(),
+            mobile: formData.mobile.trim(),
+            department: formData.department,
+            semester: formData.semester,
+            password: formData.password,
+          }
+        : {
+            role: "admin",
+            fullName: formData.fullName.trim(),
+            adminId: formData.adminId.trim(),
+            email: formData.email.trim(),
+            mobile: formData.mobile.trim(),
+            designation: formData.designation,
+            invitationCode: formData.invitationCode.trim(),
+            password: formData.password,
+          };
+
+      // Select the correct backend endpoint
+      const registerURL = isStudent
+        ? "http://localhost:8080/api/auth/register"
+        : "http://localhost:8080/api/admin/register";
+
+      const response = await fetch(registerURL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -158,8 +173,9 @@ const Register = () => {
       <div className="register-branding">
         <div className="register-brand-logo">
           <div className="register-logo-icon">
-            <img src="./MendItLogo.png" alt="logo" />
+            <img src="./MendItLogo.png" alt="MendIt logo" />
           </div>
+
           <h1>MendIt</h1>
           <p>Report · Resolve · Feel Better</p>
         </div>
@@ -201,6 +217,7 @@ const Register = () => {
         {/* Heading */}
         <div className="register-heading">
           <h2>Create Account</h2>
+
           <p>
             {activeRole === "student"
               ? "Register as a student to get started"
@@ -212,14 +229,17 @@ const Register = () => {
           {/* Full Name */}
           <div className="register-field">
             <label>Full Name</label>
+
             <div className="register-input">
               <i className="fa-solid fa-user"></i>
+
               <input
                 type="text"
                 name="fullName"
                 placeholder="Enter your full name"
                 value={formData.fullName}
                 onChange={handleChange}
+                required
               />
             </div>
           </div>
@@ -232,6 +252,7 @@ const Register = () => {
 
             <div className="register-input">
               <i className="fa-solid fa-id-card"></i>
+
               <input
                 type="text"
                 name={activeRole === "student" ? "rollNumber" : "adminId"}
@@ -246,6 +267,7 @@ const Register = () => {
                     : formData.adminId
                 }
                 onChange={handleChange}
+                required
               />
             </div>
           </div>
@@ -258,12 +280,14 @@ const Register = () => {
 
             <div className="register-input">
               <i className="fa-solid fa-envelope"></i>
+
               <input
                 type="email"
                 name="email"
                 placeholder="Enter your email"
                 value={formData.email}
                 onChange={handleChange}
+                required
               />
             </div>
           </div>
@@ -274,6 +298,7 @@ const Register = () => {
 
             <div className="register-input">
               <i className="fa-solid fa-phone"></i>
+
               <input
                 type="tel"
                 name="mobile"
@@ -281,6 +306,7 @@ const Register = () => {
                 maxLength="10"
                 value={formData.mobile}
                 onChange={handleChange}
+                required
               />
             </div>
           </div>
@@ -293,15 +319,19 @@ const Register = () => {
 
                 <div className="register-input">
                   <i className="fa-solid fa-building-columns"></i>
+
                   <select
                     name="department"
                     value={formData.department}
                     onChange={handleChange}
+                    required
                   >
                     <option value="">Select Department</option>
                     <option value="CSE">Computer Science</option>
                     <option value="IT">Information Technology</option>
-                    <option value="ECE">Electronics & Communication</option>
+                    <option value="ECE">
+                      Electronics & Communication
+                    </option>
                     <option value="ME">Mechanical Engineering</option>
                     <option value="CE">Civil Engineering</option>
                     <option value="Other">Other</option>
@@ -314,10 +344,12 @@ const Register = () => {
 
                 <div className="register-input">
                   <i className="fa-solid fa-graduation-cap"></i>
+
                   <select
                     name="semester"
                     value={formData.semester}
                     onChange={handleChange}
+                    required
                   >
                     <option value="">Select Semester</option>
                     <option value="1">1st Semester</option>
@@ -342,10 +374,12 @@ const Register = () => {
 
                 <div className="register-input">
                   <i className="fa-solid fa-briefcase"></i>
+
                   <select
                     name="designation"
                     value={formData.designation}
                     onChange={handleChange}
+                    required
                   >
                     <option value="">Select Designation</option>
                     <option value="Administrator">Administrator</option>
@@ -361,12 +395,14 @@ const Register = () => {
 
                 <div className="register-input">
                   <i className="fa-solid fa-key"></i>
+
                   <input
                     type="password"
                     name="invitationCode"
                     placeholder="Enter invitation code"
                     value={formData.invitationCode}
                     onChange={handleChange}
+                    required
                   />
                 </div>
               </div>
@@ -386,15 +422,19 @@ const Register = () => {
                 placeholder="Create a password"
                 value={formData.password}
                 onChange={handleChange}
+                required
               />
 
               <button
                 type="button"
                 className="register-password-toggle"
-                onClick={() => setShowPassword(!showPassword)}
+                onClick={() => setShowPassword((prev) => !prev)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 <i
-                  className={`fa-solid ${showPassword ? "fa-eye-slash" : "fa-eye"}`}
+                  className={`fa-solid ${
+                    showPassword ? "fa-eye-slash" : "fa-eye"
+                  }`}
                 ></i>
               </button>
             </div>
@@ -413,28 +453,38 @@ const Register = () => {
                 placeholder="Confirm your password"
                 value={formData.confirmPassword}
                 onChange={handleChange}
+                required
               />
 
               <button
                 type="button"
                 className="register-password-toggle"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                onClick={() => setShowConfirmPassword((prev) => !prev)}
+                aria-label={
+                  showConfirmPassword
+                    ? "Hide confirm password"
+                    : "Show confirm password"
+                }
               >
                 <i
-                  className={`fa-solid ${showConfirmPassword ? "fa-eye-slash" : "fa-eye"}`}
+                  className={`fa-solid ${
+                    showConfirmPassword ? "fa-eye-slash" : "fa-eye"
+                  }`}
                 ></i>
               </button>
             </div>
           </div>
 
-          {/* Error Message */}
+          {/* Error and Success Messages */}
           {error && <p className="register-error">{error}</p>}
-
-          {/* Success Message */}
           {success && <p className="register-success">{success}</p>}
 
           {/* Register Button */}
-          <button type="submit" className="register-button" disabled={loading}>
+          <button
+            type="submit"
+            className="register-button"
+            disabled={loading}
+          >
             {loading ? "Creating Account..." : "Create Account"}
           </button>
         </form>

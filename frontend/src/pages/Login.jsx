@@ -1,13 +1,15 @@
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import "./Login.css";
+
 const Login = () => {
   const navigate = useNavigate();
 
   const [activeRole, setActiveRole] = useState("student");
   const [rollNumber, setRollNumber] = useState("");
-  const [adminId, setAdminId] = useState("");
+  const [adminEmail, setAdminEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -25,13 +27,15 @@ const Login = () => {
     setError("");
 
     const loginId =
-      activeRole === "student" ? rollNumber.trim() : adminId.trim();
+      activeRole === "student"
+        ? rollNumber.trim()
+        : adminEmail.trim();
 
     if (!loginId || !password.trim()) {
       setError(
         `Please enter your ${
-          activeRole === "student" ? "roll number" : "admin ID"
-        } and password.`,
+          activeRole === "student" ? "roll number" : "email"
+        } and password.`
       );
       return;
     }
@@ -39,25 +43,29 @@ const Login = () => {
     try {
       setLoading(true);
 
-      const response = await fetch("http://localhost:8080/api/auth/login", {
+      const loginURL =
+        activeRole === "student"
+          ? "http://localhost:8080/api/auth/login"
+          : "http://localhost:8080/api/admin/login";
+
+      const payload =
+        activeRole === "student"
+          ? {
+              rollNumber: loginId,
+              password,
+              rememberMe,
+            }
+          : {
+              email: loginId,
+              password,
+            };
+
+      const response = await fetch(loginURL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        // credentials: "include",
-        body: JSON.stringify(
-          activeRole === "student"
-            ? {
-                rollNumber: loginId,
-                password,
-                rememberMe,
-              }
-            : {
-                adminId: loginId,
-                password,
-                rememberMe,
-              },
-        ),
+        body: JSON.stringify(payload),
       });
 
       const data = await response.json();
@@ -66,14 +74,21 @@ const Login = () => {
         throw new Error(data.message || "Invalid credentials");
       }
 
+      // Store the logged-in user
+      const userData = data.data?.user || data;
+
       sessionStorage.setItem(
         activeRole === "student" ? "student" : "admin",
-        JSON.stringify(data.data.user),
+        JSON.stringify(userData)
       );
 
+      // Navigate to the correct dashboard
       navigate(
-        activeRole === "student" ? "/studentDashboard" : "/adminDashboard",
+        activeRole === "student"
+          ? "/studentDashboard"
+          : "/adminDashboard"
       );
+
     } catch (err) {
       setError(err.message || "Something went wrong. Please try again.");
     } finally {
@@ -83,6 +98,7 @@ const Login = () => {
 
   return (
     <div className="login-page">
+
       {/* Left Branding Section */}
       <div className="login-branding">
         <div className="brand-logo">
@@ -106,6 +122,7 @@ const Login = () => {
 
       {/* Right Login Section */}
       <div className="login-container">
+
         {/* Login Tabs */}
         <div className="login-tabs">
           <button
@@ -127,7 +144,9 @@ const Login = () => {
 
         {/* Login Heading */}
         <div className="login-heading">
-          <h2>{activeRole === "student" ? "Welcome Back!" : "Admin Login"}</h2>
+          <h2>
+            {activeRole === "student" ? "Welcome Back!" : "Admin Login"}
+          </h2>
 
           <p>
             {activeRole === "student"
@@ -137,22 +156,27 @@ const Login = () => {
         </div>
 
         <form onSubmit={handleLogin}>
-          {/* Student Roll Number / Admin ID */}
+
+          {/* Student Roll Number / Admin Email */}
           <div className="login-input">
             <span>
               <i className="fa-solid fa-id-card"></i>
             </span>
 
             <input
-              type="text"
+              type={activeRole === "student" ? "text" : "email"}
               placeholder={
-                activeRole === "student" ? "Roll Number" : "Admin ID"
+                activeRole === "student"
+                  ? "Roll Number"
+                  : "Official Email"
               }
-              value={activeRole === "student" ? rollNumber : adminId}
+              value={
+                activeRole === "student" ? rollNumber : adminEmail
+              }
               onChange={(e) =>
                 activeRole === "student"
                   ? setRollNumber(e.target.value)
-                  : setAdminId(e.target.value)
+                  : setAdminEmail(e.target.value)
               }
               required
             />
@@ -209,58 +233,37 @@ const Login = () => {
           {error && <p className="login-error">{error}</p>}
 
           {/* Login Button */}
-          <button type="submit" className="login-button" disabled={loading}>
+          <button
+            type="submit"
+            className="login-button"
+            disabled={loading}
+          >
             {loading ? "Logging in..." : "Login"}
           </button>
+
         </form>
 
-        {/* Register Section - Student Only */}
-        {activeRole === "student" && (
-          <>
-            <div className="login-divider">
-              <span></span>
-              or
-              <span></span>
-            </div>
+        {/* Register Section */}
+        <div className="login-divider">
+          <span></span>
+          or
+          <span></span>
+        </div>
 
-            <p className="register-text">
-              Don't have an account?{" "}
-              <button
-                type="button"
-                onClick={() =>
-                  navigate("/register", {
-                    state: { role: activeRole },
-                  })
-                }
-              >
-                Register
-              </button>
-            </p>
-          </>
-        )}
-        {activeRole === "admin" && (
-          <>
-            <div className="login-divider">
-              <span></span>
-              or
-              <span></span>
-            </div>
+        <p className="register-text">
+          Don't have an account?{" "}
+          <button
+            type="button"
+            onClick={() =>
+              navigate("/register", {
+                state: { role: activeRole },
+              })
+            }
+          >
+            Register
+          </button>
+        </p>
 
-            <p className="register-text">
-              Don't have an account?{" "}
-              <button
-                type="button"
-                onClick={() =>
-                  navigate("/register", {
-                    state: { role: activeRole },
-                  })
-                }
-              >
-                Register
-              </button>
-            </p>
-          </>
-        )}
       </div>
     </div>
   );
