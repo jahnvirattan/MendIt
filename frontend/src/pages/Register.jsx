@@ -173,7 +173,7 @@ const Register = () => {
       <div className="register-branding">
         <div className="register-brand-logo">
           <div className="register-logo-icon">
-            <img src="./MendItLogo.png" alt="MendIt logo" />
+            <img src="./logo_mendit.png" alt="MendIt logo" />
           </div>
 
           <h1>MendIt</h1>
