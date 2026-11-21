@@ -11,7 +11,7 @@
 .details-page {
   min-height: 100vh;
   padding: 38px 5%;
-  background: linear-gradient(135deg, #DCE7FA 0%, #f5f8ff 55%, #FFFFFF 100%);
+  background: #f9f6ed;
   color: var(--mendit-dark);
   font-family: "Segoe UI", Arial, sans-serif;
 }
