@@ -1,39 +1,40 @@
 
-import com.sun.net.httpserver.HttpExchange;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.sun.net.httpserver.HttpExchange;
+
 public class StudentAuthHandler {
 
-    // Converts incoming JSON into Java objects
-    // and Java objects into JSON responses.
     private final ObjectMapper objectMapper = new ObjectMapper();
-
-    // Handles student registration and login logic.
     private final StudentAuth studentAuth = new StudentAuth();
-
 
     // --------------------------------------------------
     // STUDENT REGISTRATION
     // --------------------------------------------------
 
-    public void handleStudentRegistration(
-            HttpExchange exchange
-    ) throws IOException {
+    public void handleStudentRegistration(HttpExchange exchange)
+            throws IOException {
+
+        if (!"POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+            sendError(exchange, 405, "Method not allowed.");
+            return;
+        }
 
         try {
-
-            // Read the JSON request sent by React.
             JsonNode request = objectMapper.readTree(
                     exchange.getRequestBody()
             );
 
-            // Extract student details.
+            if (request == null || !request.isObject()) {
+                sendError(exchange, 400, "Invalid JSON request.");
+                return;
+            }
+
             String role = getText(request, "role");
             String fullName = getText(request, "fullName");
             String rollNumber = getText(request, "rollNumber");
@@ -42,8 +43,6 @@ public class StudentAuthHandler {
             String department = getText(request, "department");
             String password = getText(request, "password");
 
-            // Extract and validate semester.
-            // React may send semester as a string, such as "3".
             JsonNode semesterNode = request.get("semester");
 
             int semester;
@@ -60,13 +59,11 @@ public class StudentAuthHandler {
                 return;
             }
 
-            // This endpoint is only for student registration.
             if (!"student".equalsIgnoreCase(role)) {
                 sendError(exchange, 400, "Invalid registration role.");
                 return;
             }
 
-            // Call StudentAuth to validate and register the student.
             boolean registered = studentAuth.registerStudent(
                     fullName,
                     rollNumber,
@@ -77,58 +74,59 @@ public class StudentAuthHandler {
                     password
             );
 
-            // Send success response.
             if (registered) {
-                sendResponse(exchange, 201, """
-                        {
-                            "success": true,
-                            "message": "Student registered successfully."
-                        }
-                        """);
+                sendResponse(
+                        exchange,
+                        201,
+                        "{\"success\":true,\"message\":\"Student registered successfully.\"}"
+                );
             } else {
                 sendError(exchange, 500, "Student registration failed.");
             }
 
         } catch (IllegalArgumentException e) {
-
-            // Handle invalid input and duplicate student details.
             sendError(exchange, 400, e.getMessage());
 
-        } catch (Exception e) {
+        } catch (IOException e) {
+            sendError(exchange, 400, "Invalid JSON request.");
 
-            // Handle unexpected database or server errors.
+        } catch (Exception e) {
             e.printStackTrace();
             sendError(exchange, 500, "Registration failed. Please try again.");
         }
     }
 
-
     // --------------------------------------------------
     // STUDENT LOGIN
     // --------------------------------------------------
 
-    public void handleStudentLogin(
-            HttpExchange exchange
-    ) throws IOException {
+    public void handleStudentLogin(HttpExchange exchange)
+            throws IOException {
+
+        if (!"POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+            sendError(exchange, 405, "Method not allowed.");
+            return;
+        }
 
         try {
-
-            // Read the JSON login request.
             JsonNode request = objectMapper.readTree(
                     exchange.getRequestBody()
             );
 
-            // Extract roll number and password.
+            if (request == null || !request.isObject()) {
+                sendError(exchange, 400, "Invalid JSON request.");
+                return;
+            }
+
             String rollNumber = getText(request, "rollNumber");
             String password = getText(request, "password");
 
-            // Verify student credentials.
             StudentDAO.StudentLoginData student =
                     studentAuth.loginStudent(rollNumber, password);
 
             // Create a safe user object.
             // Never send the password hash to React.
-            var user = objectMapper.createObjectNode();
+            ObjectNode user = objectMapper.createObjectNode();
 
             user.put("userId", student.userId);
             user.put("fullName", student.fullName);
@@ -139,16 +137,16 @@ public class StudentAuthHandler {
             user.put("semester", student.semester);
             user.put("role", student.role);
 
-            // Create the response in the format expected by React.
-            var response = objectMapper.createObjectNode();
+            // Create the response expected by React.
+            ObjectNode response = objectMapper.createObjectNode();
 
             response.put("success", true);
             response.put("message", "Login successful.");
 
-            response.set(
-                    "data",
-                    objectMapper.createObjectNode().set("user", user)
-            );
+            ObjectNode data = objectMapper.createObjectNode();
+            data.set("user", user);
+
+            response.set("data", data);
 
             sendResponse(
                     exchange,
@@ -157,24 +155,21 @@ public class StudentAuthHandler {
             );
 
         } catch (IllegalArgumentException e) {
-
-            // Invalid roll number or password.
             sendError(exchange, 401, e.getMessage());
 
-        } catch (Exception e) {
+        } catch (IOException e) {
+            sendError(exchange, 400, "Invalid JSON request.");
 
-            // Handle unexpected server errors.
+        } catch (Exception e) {
             e.printStackTrace();
             sendError(exchange, 500, "Login failed. Please try again.");
         }
     }
 
-
     // --------------------------------------------------
     // HELPER METHODS
     // --------------------------------------------------
 
-    // Extract a text value safely from a JSON request.
     private String getText(JsonNode request, String field) {
 
         JsonNode value = request.get(field);
@@ -186,15 +181,13 @@ public class StudentAuthHandler {
         return value.asText();
     }
 
-
-    // Create a consistent JSON error response.
     private void sendError(
             HttpExchange exchange,
             int statusCode,
             String message
     ) throws IOException {
 
-        var error = objectMapper.createObjectNode();
+        ObjectNode error = objectMapper.createObjectNode();
 
         error.put("success", false);
         error.put("message", message);
@@ -206,8 +199,6 @@ public class StudentAuthHandler {
         );
     }
 
-
-    // Send JSON response to the React frontend.
     private void sendResponse(
             HttpExchange exchange,
             int statusCode,
@@ -216,6 +207,11 @@ public class StudentAuthHandler {
 
         byte[] responseBytes =
                 response.getBytes(StandardCharsets.UTF_8);
+
+        exchange.getResponseHeaders().set(
+                "Content-Type",
+                "application/json; charset=UTF-8"
+        );
 
         exchange.sendResponseHeaders(
                 statusCode,

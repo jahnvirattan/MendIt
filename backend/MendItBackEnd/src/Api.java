@@ -1,15 +1,18 @@
 
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
 
 public class Api implements HttpHandler {
     // Handles student registration and login API requests.
     private final StudentAuthHandler studentAuthHandler =
             new StudentAuthHandler();
+            // Handles student dashboard requests.
+private final StudentDashboardHandler studentDashboardHandler =
+        new StudentDashboardHandler();
     @Override
     public void handle(HttpExchange exchange) throws IOException {
 
@@ -57,7 +60,14 @@ public class Api implements HttpHandler {
             studentAuthHandler.handleStudentLogin(exchange);
             return;
         }
+// Fetches dashboard details, complaint statistics,
+// and recent complaints for the requested student.
+if (method.equalsIgnoreCase("GET")
+        && path.equals("/api/student/dashboard")) {
 
+    studentDashboardHandler.handleDashboard(exchange);
+    return;
+}
 
 
         String response;
