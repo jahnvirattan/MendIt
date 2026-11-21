@@ -103,7 +103,7 @@ const Login = () => {
       <div className="login-branding">
         <div className="brand-logo">
           <div className="logo-icon">
-            <img src="./MendItLogo.png" alt="logo" />
+            <img src="./logo_mendit.png" alt="logo" />
           </div>
           <h1>MendIt</h1>
           <p>Report · Resolve · Feel Better</p>
