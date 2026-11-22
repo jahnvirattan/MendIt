@@ -23,26 +23,25 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
           {/* Student Pages */}
-          {/* <Route element={<ProtectedRoutes allowedRole="student" />}> */}
-          <Route element={<StudentLayout />}>
-            <Route path="/studentDashboard" element={<StudentDashboard />} />
-            <Route path="/submitComplaint" element={<SubmitComplaint />} />
-            <Route path="/myComplaints" element={<MyComplaints />} />
-            <Route path="/student/profile" element={<StudentProfile />} />
+          <Route element={<ProtectedRoutes allowedRole="student" />}>
+            <Route element={<StudentLayout />}>
+              <Route path="/studentDashboard" element={<StudentDashboard />} />
+              <Route path="/submitComplaint" element={<SubmitComplaint />} />
+              <Route path="/myComplaints" element={<MyComplaints />} />
+              <Route path="/student/profile" element={<StudentProfile />} />
+            </Route>
           </Route>
-          {/* </Route> */}
           {/* Admin Pages */}
-          {/* <Route element={<ProtectedRoutes allowedRole="admin" />}> */}
-          <Route element={<AdminLayout />}>
-            <Route path="/admin/complaints" element={<AllComplaints />} />
-            <Route
-              path="/admin/complaints/:id"
-              element={<ComplaintDetails />}
-            />
-            <Route path="/adminDashboard" element={<AdminDashboard />} />
+          <Route element={<ProtectedRoutes allowedRole="admin" />}>
+            <Route element={<AdminLayout />}>
+              <Route path="/admin/complaints" element={<AllComplaints />} />
+              <Route
+                path="/admin/complaints/:id"
+                element={<ComplaintDetails />}
+              />
+              <Route path="/adminDashboard" element={<AdminDashboard />} />
+            </Route>
           </Route>
-
-          {/* </Route> */}
         </Routes>
       </BrowserRouter>
     </div>
