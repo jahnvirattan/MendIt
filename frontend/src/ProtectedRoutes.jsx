@@ -2,7 +2,7 @@ import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
 
 const ProtectedRoutes = ({ allowedRole }) => {
-  const user = JSON.parse(localStorage.getItem("user") || "null");
+  const user = JSON.parse(sessionStorage.getItem(allowedRole) || "null");
 
   if (!user) {
     return <Navigate to="/" replace />;

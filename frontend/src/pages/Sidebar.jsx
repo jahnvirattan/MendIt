@@ -49,6 +49,8 @@ const Sidebar = ({ role, isOpen, onToggle }) => {
   const links = role === "student" ? studentLinks : adminLinks;
 
   const handleLogout = () => {
+    sessionStorage.removeItem(role);
+
     navigate("/", { replace: true });
   };
 
