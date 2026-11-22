@@ -28,23 +28,23 @@ const Sidebar = ({ role, isOpen, onToggle }) => {
     },
   ];
 
-  const adminLinks = [
-    {
-      name: "Dashboard",
-      path: "/adminDashboard",
-      icon: "fa-solid fa-house",
-    },
-    {
-      name: "View Complaints",
-      path: "/admin/complaints",
-      icon: "fa-solid fa-file-lines",
-    },
-    {
-      name: "Complaint Details",
-      path: "/admin/complaints/:id",
-      icon: "fa-solid fa-chart-column",
-    },
-  ];
+const adminLinks = [
+  {
+    name: "Dashboard",
+    path: "/adminDashboard",
+    icon: "fa-solid fa-house",
+  },
+  {
+    name: "View Complaints",
+    path: "/admin/complaints",
+    icon: "fa-solid fa-file-lines",
+  },
+  {
+    name: "My Profile",
+    path: "/admin/profile",
+    icon: "fa-solid fa-user",
+  },
+];
 
   const links = role === "student" ? studentLinks : adminLinks;
 

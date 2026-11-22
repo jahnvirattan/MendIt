@@ -6,6 +6,7 @@ import AdminDashboard from "./pages/Admin/AdminDashboard";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import StudentDashboard from "./pages/StudentDashboard";
+import AdminProfile from "./pages/Admin/AdminProfile";
 
 import MyComplaints from "./pages/student/MyComplaints";
 import StudentProfile from "./pages/student/StudentProfile";
@@ -32,16 +33,18 @@ function App() {
             </Route>
           </Route>
           {/* Admin Pages */}
-          <Route element={<ProtectedRoutes allowedRole="admin" />}>
-            <Route element={<AdminLayout />}>
-              <Route path="/admin/complaints" element={<AllComplaints />} />
-              <Route
-                path="/admin/complaints/:id"
-                element={<ComplaintDetails />}
-              />
-              <Route path="/adminDashboard" element={<AdminDashboard />} />
-            </Route>
-          </Route>
+      {/* Admin Pages */}
+<Route element={<ProtectedRoutes allowedRole="admin" />}>
+  <Route element={<AdminLayout />}>
+    <Route path="/admin/complaints" element={<AllComplaints />} />
+    <Route
+      path="/admin/complaints/:id"
+      element={<ComplaintDetails />}
+    />
+    <Route path="/adminDashboard" element={<AdminDashboard />} />
+    <Route path="/admin/profile" element={<AdminProfile />} />
+  </Route>
+</Route>
         </Routes>
       </BrowserRouter>
     </div>

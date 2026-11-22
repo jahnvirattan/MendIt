@@ -21,8 +21,7 @@ public class Api implements HttpHandler {
     private final StudentDashboardHandler studentDashboardHandler = new StudentDashboardHandler();
 
     // Student complaint submission and history -a
-    private final StudentComplaintHandler studentComplaintHandler =
-        new StudentComplaintHandler();
+    private final StudentComplaintHandler studentComplaintHandler = new StudentComplaintHandler();
 
     // Admin dashboard
     private final AdminDashboard adminDashboard = new AdminDashboard();
@@ -35,6 +34,9 @@ public class Api implements HttpHandler {
 
     // Convert Java data into JSON
     private final ObjectMapper mapper = new ObjectMapper();
+
+    // Admin profile
+    private final AdminProfileHandler adminProfileHandler = new AdminProfileHandler();
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
@@ -121,7 +123,22 @@ public class Api implements HttpHandler {
             studentDashboardHandler.handleUpdateProfile(exchange);
             return;
         }
-        //added route for student complaints handle
+        // ADMIN PROFILE - FETCH DETAILS
+        if (method.equalsIgnoreCase("GET")
+                && path.equals("/api/admin/profile")) {
+
+            adminProfileHandler.handleGetProfile(exchange);
+            return;
+        }
+
+        // ADMIN PROFILE - UPDATE DETAILS
+        if (method.equalsIgnoreCase("PUT")
+                && path.equals("/api/admin/profile")) {
+
+            adminProfileHandler.handleUpdateProfile(exchange);
+            return;
+        }
+        // added route for student complaints handle
         if (method.equalsIgnoreCase("POST")
                 && path.equals("/api/student/complaints")) {
 
