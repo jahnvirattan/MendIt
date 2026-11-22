@@ -2,6 +2,18 @@ import { useState } from "react";
 import "./SubmitComplaint.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
+function getStudentId() {
+  try {
+    const student = JSON.parse(
+      sessionStorage.getItem("student") || "null"
+    );
+
+    return student?.user_id ?? student?.userId ?? student?.id ?? null;
+  } catch {
+    return null;
+  }
+}
+
 function SubmitComplaint() {
   const [formData, setFormData] = useState({
     title: "",
@@ -20,9 +32,57 @@ function SubmitComplaint() {
       [e.target.name]: e.target.value,
     });
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert("Complaint submitted successfully!");
+
+    const studentId = getStudentId();
+
+    if (!studentId) {
+      alert("Please log in again before submitting a complaint.");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        "http://localhost:8080/api/student/complaints",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            studentId: Number(studentId),
+            title: formData.title,
+            category: formData.category,
+            description: formData.description,
+            building: formData.building,
+            floor: formData.floor,
+            roomOrArea: formData.location,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || "Could not submit the complaint.");
+      }
+
+      alert(`Complaint submitted successfully. ID: ${data.complaintId}`);
+
+      setFormData({
+        title: "",
+        category: "",
+        description: "",
+        building: "",
+        floor: "",
+        location: "",
+      });
+
+      setPhoto(null);
+    } catch (error) {
+      alert(error.message || "Unable to connect to the server.");
+    }
   };
   return (
     <div className="complaint-page">

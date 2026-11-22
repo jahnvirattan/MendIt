@@ -61,7 +61,7 @@ public class StudentDashboardDAO {
 
     String sql = """
             SELECT user_id, full_name, email, roll_number,
-                   department, mobile, semester
+                   department, mobile, semester,created_at
             FROM users
             WHERE user_id = ?
             """;
@@ -80,11 +80,35 @@ public class StudentDashboardDAO {
                 student.put("department", result.getString("department"));
                 student.put("mobile", result.getString("mobile"));
                 student.put("semester", result.getInt("semester"));
+                student.put("createdAt", result.getString("created_at"));
             }
         }
     }
 
     return student;
+}
+//Added method to update student profile
+public boolean updateStudentProfile(
+        int studentId,
+        String fullName,
+        String department
+) throws SQLException {
+
+    String sql = """
+            UPDATE users
+            SET full_name = ?, department = ?
+            WHERE user_id = ?
+            """;
+
+    try (Connection connection = DBConnection.getConnection();
+         PreparedStatement statement = connection.prepareStatement(sql)) {
+
+        statement.setString(1, fullName);
+        statement.setString(2, department);
+        statement.setInt(3, studentId);
+
+        return statement.executeUpdate() > 0;
+    }
 }
 public List<Map<String, Object>> getRecentComplaints(int studentId)
         throws SQLException {

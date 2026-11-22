@@ -1,16 +1,9 @@
 import { useEffect, useState } from "react";
 import "./StudentProfile.css";
 
-const API_URL = "http://localhost:8080/api/student/profile";
-const previewProfile = {
-  full_name: "Avdhi Chhabra",
-  email: "avdhi.demo@example.edu",
-  roll_number: "DEMO004",
-  department: "Computer Science",
-  created_at: "2025-08-15T00:00:00",
-  mobile: "9876543210",
-  semester: 2,
-};
+const PROFILE_GET_URL = "http://localhost:8080/api/student/dashboard";
+const PROFILE_UPDATE_URL = "http://localhost:8080/api/student/profile";
+
 
 function getStudentId() {
   const savedStudent = sessionStorage.getItem("student");
@@ -69,48 +62,54 @@ function StudentProfile() {
   const [message, setMessage] = useState("");
 
   const studentId = getStudentId();
-  function showPreviewProfile() {
-  setProfile(previewProfile);
-  setForm({
-    full_name: previewProfile.full_name,
-    department: previewProfile.department,
-  });
-    setError("");
-  }
+
 
   async function loadProfile() {
-    setError("");
-    setMessage("");
+  setError("");
+  setMessage("");
 
-    if (!studentId) {
-    showPreviewProfile();
+  if (!studentId) {
+    setProfile(null);
+    setError("Please sign in to view your profile.");
     setLoading(false);
     return;
   }
 
-    setLoading(true);
+  setLoading(true);
 
-    try {
-      const response = await fetch(
-        `${API_URL}?studentId=${encodeURIComponent(studentId)}`
-      );
-      const data = await response.json();
+  try {
+    const response = await fetch(
+      `${PROFILE_GET_URL}?studentId=${encodeURIComponent(studentId)}`
+    );
+    const data = await response.json();
+    const student = data?.data?.student;
 
-      if (!response.ok || !data.profile) {
-        throw new Error(data.message || "We couldn't load your profile.");
-      }
-
-      setProfile(data.profile);
-      setForm({
-        full_name: data.profile.full_name || "",
-        department: data.profile.department || "",
-      });
-    } catch {
-      showPreviewProfile();
-    } finally {
-      setLoading(false);
+    if (!response.ok || !data.success || !student) {
+      throw new Error(data.message || "We couldn't load your profile.");
     }
+
+    const profileFromDatabase = {
+      full_name: student.fullName || "",
+      email: student.email || "",
+      roll_number: student.rollNumber || "",
+      department: student.department || "",
+      mobile: student.mobile || "",
+      semester: student.semester || "",
+      created_at: student.createdAt || "",
+    };
+
+    setProfile(profileFromDatabase);
+    setForm({
+      full_name: profileFromDatabase.full_name,
+      department: profileFromDatabase.department,
+    });
+  } catch (requestError) {
+    setProfile(null);
+    setError(requestError.message || "We couldn't load your profile.");
+  } finally {
+    setLoading(false);
   }
+}
 
   useEffect(() => {
     loadProfile();
@@ -148,7 +147,7 @@ function StudentProfile() {
     setMessage("");
 
     try {
-      const response = await fetch(API_URL, {
+      const response = await fetch(PROFILE_UPDATE_URL, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -320,7 +319,6 @@ function StudentProfile() {
                   value={profile?.email || ""}
                   readOnly
                 />
-                <small>Email address can’t be changed here.</small>
               </label>
 
               <label className="profile-field">

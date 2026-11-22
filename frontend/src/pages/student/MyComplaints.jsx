@@ -14,62 +14,6 @@ const statusLabels = {
   RESOLVED: "Resolved",
   REJECTED: "Rejected",
 };
-const previewComplaints = [
-  {
-    id: 1024,
-    title: "Projector not working",
-    category: "Electrical",
-    description: "The projector turns on, but no image appears.",
-    building: "Science Block",
-    floor: "2",
-    roomOrArea: "Room 204",
-    location: "",
-    priority: "HIGH",
-    status: "IN_PROGRESS",
-    adminNote: "The issue is being checked by the maintenance team.",
-    submittedAt: "2026-11-12T09:15:00",
-    updatedAt: "2026-11-14T11:30:00",
-    resolvedAt: "",
-    feedbackSubmitted: false,
-    feedbackRating: null,
-  },
-  {
-    id: 1025,
-    title: "Leaking tap in Block B",
-    category: "Plumbing",
-    description: "Water is leaking continuously from the washroom tap.",
-    building: "Block B",
-    floor: "2",
-    roomOrArea: "Washroom",
-    location: "",
-    priority: "MEDIUM",
-    status: "UNDER_REVIEW",
-    adminNote: "",
-    submittedAt: "2026-11-15T10:00:00",
-    updatedAt: "2026-11-15T10:00:00",
-    resolvedAt: "",
-    feedbackSubmitted: false,
-    feedbackRating: null,
-  },
-  {
-    id: 1026,
-    title: "Library lights flickering",
-    category: "Electrical",
-    description: "The lights near the reading area keep flickering.",
-    building: "Central Library",
-    floor: "1",
-    roomOrArea: "Reading Hall",
-    location: "",
-    priority: "LOW",
-    status: "RESOLVED",
-    adminNote: "Faulty lights were replaced.",
-    submittedAt: "2026-11-10T11:20:00",
-    updatedAt: "2026-11-11T16:10:00",
-    resolvedAt: "2026-11-11T16:10:00",
-    feedbackSubmitted: false,
-    feedbackRating: null,
-  },
-];
 
 function getStudentId() {
   try {
@@ -218,9 +162,9 @@ function MyComplaints() {
 
       if (!studentId) {
         if (isPageOpen) {
-          setComplaints(previewComplaints);
-          setSelectedId(previewComplaints[0].id);
-          setError("");
+          setComplaints([]);
+          setSelectedId(null);
+          setError("Please log in again to view your complaints.");
           setLoading(false);
         }
         return;
@@ -228,7 +172,7 @@ function MyComplaints() {
 
       try {
         const response = await fetch(
-          `${API_URL}?studentId=${encodeURIComponent(studentId)}`,
+          `${API_URL}?studentId=${encodeURIComponent(studentId)}`
         );
 
         const data = await response.json();
@@ -238,18 +182,24 @@ function MyComplaints() {
         }
 
         if (!Array.isArray(data.complaints)) {
-          throw new Error("The complaints service is not available yet.");
+          throw new Error("The complaints response has an unexpected format.");
         }
 
+        const loadedComplaints =
+          data.complaints.map(normalizeComplaint);
+
         if (isPageOpen) {
-          setComplaints(data.complaints.map(normalizeComplaint));
+          setComplaints(loadedComplaints);
+          setSelectedId(loadedComplaints[0]?.id ?? null);
         }
-      }  catch {
-      if (isPageOpen) {
-        setComplaints(previewComplaints);
-        setSelectedId(previewComplaints[0].id);
-        setError("");
-      }
+      } catch (requestError) {
+        if (isPageOpen) {
+          setComplaints([]);
+          setSelectedId(null);
+          setError(
+            requestError.message || "Could not load your complaints."
+          );
+        }
       } finally {
         if (isPageOpen) {
           setLoading(false);

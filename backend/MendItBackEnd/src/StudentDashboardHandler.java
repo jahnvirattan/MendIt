@@ -1,6 +1,7 @@
 import com.sun.net.httpserver.HttpExchange;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -89,6 +90,83 @@ public class StudentDashboardHandler {
             ));
         }
     }
+//     added method to handle profile update -a
+    public void handleUpdateProfile(HttpExchange exchange)
+        throws IOException {
+
+        if (!exchange.getRequestMethod().equalsIgnoreCase("PUT")) {
+                sendResponse(exchange, 405, Map.of(
+                        "success", false,
+                        "message", "Method not allowed."
+                ));
+                return;
+        }
+
+        try {
+                Map<String, Object> request =
+                        objectMapper.readValue(
+                                exchange.getRequestBody(),
+                                new TypeReference<Map<String, Object>>() {}
+                        );
+
+                Object studentIdValue = request.get("studentId");
+                String fullName = String.valueOf(
+                        request.getOrDefault("full_name", "")
+                ).trim();
+                String department = String.valueOf(
+                        request.getOrDefault("department", "")
+                ).trim();
+
+                if (studentIdValue == null || fullName.isEmpty()) {
+                sendResponse(exchange, 400, Map.of(
+                        "success", false,
+                        "message", "Student ID and full name are required."
+                ));
+                return;
+                }
+
+                int studentId = Integer.parseInt(studentIdValue.toString());
+
+                if (studentId <= 0 || fullName.length() > 100
+                        || department.length() > 100) {
+                sendResponse(exchange, 400, Map.of(
+                        "success", false,
+                        "message", "The profile details are invalid."
+                ));
+                return;
+                }
+
+                boolean updated = dashboardDAO.updateStudentProfile(
+                        studentId, fullName, department
+                );
+
+                if (!updated) {
+                sendResponse(exchange, 404, Map.of(
+                        "success", false,
+                        "message", "Student profile was not updated."
+                ));
+                return;
+                }
+
+                sendResponse(exchange, 200, Map.of(
+                        "success", true,
+                        "message", "Profile updated successfully."
+                ));
+
+        } catch (NumberFormatException e) {
+                sendResponse(exchange, 400, Map.of(
+                        "success", false,
+                        "message", "Student ID must be a valid number."
+                ));
+
+        } catch (SQLException e) {
+                e.printStackTrace();
+                sendResponse(exchange, 500, Map.of(
+                        "success", false,
+                        "message", "Unable to update profile."
+                ));
+        }
+        }
 
     private void sendResponse(
             HttpExchange exchange,

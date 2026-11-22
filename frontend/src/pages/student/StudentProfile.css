@@ -184,9 +184,17 @@
 .profile-field input[readonly] {
   background: #fbf8f0;
   color: #526078;
+  cursor: default;
+  caret-color: transparent;
 }
 
-.profile-field input:focus {
+.profile-field input[readonly]:focus {
+  border-color: #e9dfc9;
+  outline: none;
+  box-shadow: none;
+}
+
+.profile-field input:not([readonly]):focus {
   border-color: #5279d8;
   outline: 3px solid #dce7fa;
 }

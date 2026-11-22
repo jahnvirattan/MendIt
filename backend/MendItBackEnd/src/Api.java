@@ -20,6 +20,10 @@ public class Api implements HttpHandler {
     // Student dashboard
     private final StudentDashboardHandler studentDashboardHandler = new StudentDashboardHandler();
 
+    // Student complaint submission and history -a
+    private final StudentComplaintHandler studentComplaintHandler =
+        new StudentComplaintHandler();
+
     // Admin dashboard
     private final AdminDashboard adminDashboard = new AdminDashboard();
 
@@ -108,6 +112,27 @@ public class Api implements HttpHandler {
                 && path.equals("/api/student/dashboard")) {
 
             studentDashboardHandler.handleDashboard(exchange);
+            return;
+        }
+        // added route for student profile update - a
+        if (method.equalsIgnoreCase("PUT")
+                && path.equals("/api/student/profile")) {
+
+            studentDashboardHandler.handleUpdateProfile(exchange);
+            return;
+        }
+        //added route for student complaints handle
+        if (method.equalsIgnoreCase("POST")
+                && path.equals("/api/student/complaints")) {
+
+            studentComplaintHandler.handleSubmit(exchange);
+            return;
+        }
+
+        if (method.equalsIgnoreCase("GET")
+                && path.equals("/api/student/complaints")) {
+
+            studentComplaintHandler.handleStudentComplaints(exchange);
             return;
         }
 
