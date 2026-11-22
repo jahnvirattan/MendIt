@@ -64,6 +64,7 @@ function normalizeComplaint(row) {
     submittedAt: row.submittedAt || row.submitted_at || "",
     updatedAt: row.updatedAt || row.updated_at || "",
     resolvedAt: row.resolvedAt || row.resolved_at || "",
+    photoPath: row.photoPath || row.photo_path || "",
     feedbackSubmitted:
     row.feedbackSubmitted ??
     row.feedback_submitted ??
@@ -480,6 +481,15 @@ function MyComplaints() {
                   <h3>Issue reported</h3>
                   <p>{selectedComplaint.description}</p>
                 </div>
+                {selectedComplaint.photoPath && (
+                  <div className="student-complaint-photo">
+                    <h3>Attached Photo</h3>
+                    <img
+                      src={`http://localhost:8080/${selectedComplaint.photoPath}`}
+                      alt="Attached to the complaint"
+                    />
+                  </div>
+                )}
 
                 {selectedComplaint.adminNote && (
                   <div className="admin-update">

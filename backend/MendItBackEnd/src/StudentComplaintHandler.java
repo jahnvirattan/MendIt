@@ -18,6 +18,9 @@ public class StudentComplaintHandler {
 
     private final ObjectMapper mapper = new ObjectMapper();
 
+    private final ComplaintPhotoStorage photoStorage =
+        new ComplaintPhotoStorage();
+
     public void handleSubmit(HttpExchange exchange)
             throws IOException {
 
@@ -32,10 +35,21 @@ public class StudentComplaintHandler {
         Map<String, Object> request;
 
         try {
-            request = mapper.readValue(
-                    exchange.getRequestBody(),
-                    new TypeReference<Map<String, Object>>() {}
-            );
+                byte[] requestBytes = exchange.getRequestBody()
+                .readNBytes(7 * 1024 * 1024 + 1);
+
+        if (requestBytes.length > 7 * 1024 * 1024) {
+        sendResponse(exchange, 413, Map.of(
+                "success", false,
+                "message", "Request is too large. Photo limit is 5 MB."
+        ));
+        return;
+        }
+
+        request = mapper.readValue(
+                requestBytes,
+                new TypeReference<Map<String, Object>>() {}
+        );
         } catch (IOException e) {
             sendResponse(exchange, 400, Map.of(
                     "success", false,
@@ -55,6 +69,7 @@ public class StudentComplaintHandler {
             String building = getText(request, "building");
             String floor = getText(request, "floor");
             String roomOrArea = getText(request, "roomOrArea");
+            String photoData = getText(request, "photoData");
 
             if (studentId <= 0
                     || title.isEmpty()
@@ -68,6 +83,7 @@ public class StudentComplaintHandler {
                 ));
                 return;
             }
+            String photoPath = photoStorage.savePhoto(photoData);
 
             StudentComplaint complaint = new StudentComplaint(
                     studentId,
@@ -77,10 +93,22 @@ public class StudentComplaintHandler {
                     building,
                     floor.isEmpty() ? null : floor,
                     roomOrArea,
-                    null
+                    photoPath
             );
 
-            int complaintId = submissionDAO.saveComplaint(complaint);
+            int complaintId;
+
+                try {
+                complaintId = submissionDAO.saveComplaint(complaint);
+                } catch (SQLException e) {
+                try {
+                        photoStorage.deletePhoto(photoPath);
+                } catch (IOException cleanupError) {
+                        cleanupError.printStackTrace();
+                }
+
+                throw e;
+                }
 
             sendResponse(exchange, 201, Map.of(
                     "success", true,
@@ -94,13 +122,27 @@ public class StudentComplaintHandler {
                     "message", "Student ID must be a valid number."
             ));
 
-        } catch (SQLException e) {
+        }        catch (IllegalArgumentException e) {
+                sendResponse(exchange, 400, Map.of(
+                         "success", false,
+                         "message", e.getMessage()
+        ));
+        }
+        catch (SQLException e) {
             e.printStackTrace();
 
             sendResponse(exchange, 500, Map.of(
                     "success", false,
                     "message", "Unable to save the complaint."
             ));
+        }
+         catch (IOException e) {
+                e.printStackTrace();
+
+                sendResponse(exchange, 500, Map.of(
+                        "success", false,
+                        "message", "Unable to save the complaint photo."
+                ));
         }
     }
 

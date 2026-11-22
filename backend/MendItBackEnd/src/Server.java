@@ -13,6 +13,10 @@ public class Server {
                     new InetSocketAddress(8080), 0);
 
             server.createContext("/api", new Api());
+                    server.createContext(
+                    "/uploads/complaints/",
+                    new ComplaintPhotoHandler()
+            );
 
             server.setExecutor(null);
 

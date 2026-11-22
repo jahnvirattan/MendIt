@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import "./SubmitComplaint.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
@@ -13,6 +13,18 @@ function getStudentId() {
     return null;
   }
 }
+function readPhotoAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(
+      new Error("Could not read the selected photo.")
+    );
+
+    reader.readAsDataURL(file);
+  });
+}
 
 function SubmitComplaint() {
   const [formData, setFormData] = useState({
@@ -25,6 +37,7 @@ function SubmitComplaint() {
   });
 
   const [photo, setPhoto] = useState(null);
+  const fileInputRef = useRef(null);
 
   const handleChange = (e) => {
     setFormData({
@@ -41,6 +54,23 @@ function SubmitComplaint() {
       alert("Please log in again before submitting a complaint.");
       return;
     }
+    if (photo) {
+    const allowedTypes = [
+      "image/png",
+      "image/jpeg",
+      "image/webp",
+    ];
+
+    if (!allowedTypes.includes(photo.type)) {
+      alert("Choose a PNG, JPEG, or WEBP image.");
+      return;
+    }
+
+    if (photo.size > 5 * 1024 * 1024) {
+      alert("Photo must be 5 MB or smaller.");
+      return;
+    }
+  }
 
     try {
       const response = await fetch(
@@ -58,6 +88,7 @@ function SubmitComplaint() {
             building: formData.building,
             floor: formData.floor,
             roomOrArea: formData.location,
+            photoData: photo ? await readPhotoAsDataUrl(photo) : null,
           }),
         }
       );
@@ -80,6 +111,9 @@ function SubmitComplaint() {
       });
 
       setPhoto(null);
+            if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     } catch (error) {
       alert(error.message || "Unable to connect to the server.");
     }
@@ -193,9 +227,10 @@ function SubmitComplaint() {
             <div className="form-group">
               <label>Upload Image(Optional)</label>
               <input
+                ref={fileInputRef}
                 type="file"
-                accept="image/*"
-                onChange={(e) => setPhoto(e.target.files[0])}
+                accept="image/png,image/jpeg,image/webp"
+                onChange={(e) => setPhoto(e.target.files[0] || null)}
               />
               {photo && <p className="file-name">{photo.name}</p>}
             </div>

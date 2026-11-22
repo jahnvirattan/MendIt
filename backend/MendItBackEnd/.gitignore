@@ -37,3 +37,6 @@ sources.txt
 
 # Maven backup
 pom.xml.backup
+
+/backend/MendItBackEnd/uploads/
+/uploads/

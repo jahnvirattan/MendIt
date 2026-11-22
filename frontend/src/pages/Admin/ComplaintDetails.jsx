@@ -220,7 +220,7 @@ function ComplaintDetails() {
               <div className="complaint-photo-section">
                 <h3>Attached Photo</h3>
                 <img
-                  src={complaint.photo_path}
+                  src={`http://localhost:8080/${complaint.photo_path}`}
                   alt="Complaint attachment"
                   className="complaint-photo"
                 />
