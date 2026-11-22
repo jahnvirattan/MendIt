@@ -22,6 +22,9 @@ public class ComplaintDAO {
                 complaint.put("priority", rs.getString("priority"));
                 complaint.put("status", rs.getString("status"));
                 complaint.put("adminNote", rs.getString("admin_note"));
+                complaint.put("floor", rs.getString("floor"));
+                complaint.put("photo_path", rs.getString("photo_path"));
+                complaint.put("submitted_at", rs.getTimestamp("submitted_at").toString());
                 complaints.add(complaint);
             }
         } catch (SQLException e) {

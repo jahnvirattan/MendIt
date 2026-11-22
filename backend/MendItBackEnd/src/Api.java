@@ -36,8 +36,17 @@ public class Api implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
 
         // CORS settings
+        String origin = exchange.getRequestHeaders().getFirst("Origin");
+
+        if ("http://localhost:5173".equals(origin)
+                || "http://localhost:5174".equals(origin)) {
+
+            exchange.getResponseHeaders().set(
+                    "Access-Control-Allow-Origin", origin);
+        }
+
         exchange.getResponseHeaders().set(
-                "Access-Control-Allow-Origin", "http://localhost:5173");
+                "Vary", "Origin");
 
         exchange.getResponseHeaders().set(
                 "Access-Control-Allow-Methods",
