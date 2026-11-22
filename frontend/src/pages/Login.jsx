@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -27,15 +26,13 @@ const Login = () => {
     setError("");
 
     const loginId =
-      activeRole === "student"
-        ? rollNumber.trim()
-        : adminEmail.trim();
+      activeRole === "student" ? rollNumber.trim() : adminEmail.trim();
 
     if (!loginId || !password.trim()) {
       setError(
         `Please enter your ${
           activeRole === "student" ? "roll number" : "email"
-        } and password.`
+        } and password.`,
       );
       return;
     }
@@ -79,16 +76,13 @@ const Login = () => {
 
       sessionStorage.setItem(
         activeRole === "student" ? "student" : "admin",
-        JSON.stringify(userData)
+        JSON.stringify(userData),
       );
 
       // Navigate to the correct dashboard
       navigate(
-        activeRole === "student"
-          ? "/studentDashboard"
-          : "/adminDashboard"
+        activeRole === "student" ? "/studentDashboard" : "/adminDashboard",
       );
-
     } catch (err) {
       setError(err.message || "Something went wrong. Please try again.");
     } finally {
@@ -98,7 +92,6 @@ const Login = () => {
 
   return (
     <div className="login-page">
-
       {/* Left Branding Section */}
       <div className="login-branding">
         <div className="brand-logo">
@@ -122,7 +115,6 @@ const Login = () => {
 
       {/* Right Login Section */}
       <div className="login-container">
-
         {/* Login Tabs */}
         <div className="login-tabs">
           <button
@@ -144,9 +136,7 @@ const Login = () => {
 
         {/* Login Heading */}
         <div className="login-heading">
-          <h2>
-            {activeRole === "student" ? "Welcome Back!" : "Admin Login"}
-          </h2>
+          <h2>{activeRole === "student" ? "Welcome Back!" : "Admin Login"}</h2>
 
           <p>
             {activeRole === "student"
@@ -156,7 +146,6 @@ const Login = () => {
         </div>
 
         <form onSubmit={handleLogin}>
-
           {/* Student Roll Number / Admin Email */}
           <div className="login-input">
             <span>
@@ -166,13 +155,9 @@ const Login = () => {
             <input
               type={activeRole === "student" ? "text" : "email"}
               placeholder={
-                activeRole === "student"
-                  ? "Roll Number"
-                  : "Official Email"
+                activeRole === "student" ? "Roll Number" : "Official Email"
               }
-              value={
-                activeRole === "student" ? rollNumber : adminEmail
-              }
+              value={activeRole === "student" ? rollNumber : adminEmail}
               onChange={(e) =>
                 activeRole === "student"
                   ? setRollNumber(e.target.value)
@@ -210,7 +195,7 @@ const Login = () => {
           </div>
 
           {/* Remember Me and Forgot Password */}
-          <div className="login-options">
+          {/* <div className="login-options">
             <label className="remember-me">
               <input
                 type="checkbox"
@@ -227,20 +212,15 @@ const Login = () => {
             >
               Forgot Password?
             </button>
-          </div>
+          </div> */}
 
           {/* Error Message */}
           {error && <p className="login-error">{error}</p>}
 
           {/* Login Button */}
-          <button
-            type="submit"
-            className="login-button"
-            disabled={loading}
-          >
+          <button type="submit" className="login-button" disabled={loading}>
             {loading ? "Logging in..." : "Login"}
           </button>
-
         </form>
 
         {/* Register Section */}
@@ -263,7 +243,6 @@ const Login = () => {
             Register
           </button>
         </p>
-
       </div>
     </div>
   );
