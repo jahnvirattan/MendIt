@@ -11,11 +11,8 @@ public class ComplaintPhotoStorage {
 
     private static final Path UPLOAD_DIRECTORY = Path.of(
             System.getProperty("user.dir"),
-            "backend",
-            "MendItBackEnd",
             "uploads",
-            "complaints"
-    ).toAbsolutePath().normalize();
+            "complaints").toAbsolutePath().normalize();
 
     public String savePhoto(String dataUrl) throws IOException {
         if (dataUrl == null || dataUrl.isBlank()) {
@@ -43,24 +40,21 @@ public class ComplaintPhotoStorage {
                 break;
             default:
                 throw new IllegalArgumentException(
-                        "Only PNG, JPEG, or WEBP photos are allowed."
-                );
+                        "Only PNG, JPEG, or WEBP photos are allowed.");
         }
 
         byte[] imageBytes;
 
         try {
             imageBytes = Base64.getDecoder().decode(
-                    dataUrl.substring(commaIndex + 1)
-            );
+                    dataUrl.substring(commaIndex + 1));
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("The selected photo is invalid.");
         }
 
         if (imageBytes.length == 0 || imageBytes.length > MAX_PHOTO_SIZE) {
             throw new IllegalArgumentException(
-                    "Photo size must be between 1 byte and 5 MB."
-            );
+                    "Photo size must be between 1 byte and 5 MB.");
         }
 
         Files.createDirectories(UPLOAD_DIRECTORY);

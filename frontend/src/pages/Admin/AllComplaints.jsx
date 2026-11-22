@@ -48,6 +48,8 @@ function AllComplaints() {
           priority: complaint.priority,
           status: complaint.status,
           admin_note: complaint.adminNote,
+          floor: complaint.floor,
+          photo_path: complaint.photo_path,
         }));
 
         setComplaints(formattedComplaints);

@@ -11,8 +11,10 @@ import java.util.Locale;
 public class ComplaintPhotoHandler implements HttpHandler {
 
     private static final String URL_PREFIX = "/uploads/complaints/";
-    private static final Path UPLOAD_DIRECTORY =
-            ComplaintPhotoStorage.getUploadDirectory();
+    private static final Path UPLOAD_DIRECTORY = Path.of(
+            System.getProperty("user.dir"),
+            "uploads",
+            "complaints").toAbsolutePath().normalize();
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
@@ -41,8 +43,7 @@ public class ComplaintPhotoHandler implements HttpHandler {
         }
 
         String extension = fileName.substring(
-                fileName.lastIndexOf(".") + 1
-        ).toLowerCase(Locale.ROOT);
+                fileName.lastIndexOf(".") + 1).toLowerCase(Locale.ROOT);
 
         String contentType;
 
@@ -67,8 +68,7 @@ public class ComplaintPhotoHandler implements HttpHandler {
             exchange.getResponseHeaders().set("Content-Type", contentType);
             exchange.getResponseHeaders().set(
                     "X-Content-Type-Options",
-                    "nosniff"
-            );
+                    "nosniff");
 
             exchange.sendResponseHeaders(200, imageBytes.length);
 
@@ -83,14 +83,12 @@ public class ComplaintPhotoHandler implements HttpHandler {
     private void sendMessage(
             HttpExchange exchange,
             int statusCode,
-            String message
-    ) throws IOException {
+            String message) throws IOException {
         byte[] response = message.getBytes(StandardCharsets.UTF_8);
 
         exchange.getResponseHeaders().set(
                 "Content-Type",
-                "text/plain; charset=UTF-8"
-        );
+                "text/plain; charset=UTF-8");
 
         exchange.sendResponseHeaders(statusCode, response.length);
 
