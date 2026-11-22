@@ -145,7 +145,7 @@ const Login = () => {
           </p>
         </div>
 
-        <form onSubmit={handleLogin}>
+        <form onSubmit={handleLogin} autoComplete="on">
           {/* Student Roll Number / Admin Email */}
           <div className="login-input">
             <span>
@@ -154,6 +154,7 @@ const Login = () => {
 
             <input
               type={activeRole === "student" ? "text" : "email"}
+              name={activeRole === "student" ? "rollNumber" : "adminEmail"}
               placeholder={
                 activeRole === "student" ? "Roll Number" : "Official Email"
               }
@@ -163,6 +164,7 @@ const Login = () => {
                   ? setRollNumber(e.target.value)
                   : setAdminEmail(e.target.value)
               }
+              autoComplete="on"
               required
             />
           </div>
@@ -175,9 +177,11 @@ const Login = () => {
 
             <input
               type={showPassword ? "text" : "password"}
+              name="password"
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              autoComplete="current-password"
               required
             />
 
