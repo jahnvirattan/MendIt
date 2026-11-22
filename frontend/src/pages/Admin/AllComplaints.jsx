@@ -39,7 +39,7 @@ function AllComplaints() {
         const formattedComplaints = result.data.map((complaint) => ({
           complaint_id: complaint.complaintId,
           student_id: complaint.studentId,
-          student_name: `Student #${complaint.studentId}`,
+          student_name: complaint.studentName || `Student #${complaint.studentId}`,
           title: complaint.title,
           description: complaint.description,
           category: complaint.category,
