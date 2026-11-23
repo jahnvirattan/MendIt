@@ -15,6 +15,8 @@ public class StudentComplaint {
     private String submittedAt;
     private String updatedAt;
     private String resolvedAt;
+    private boolean feedbackSubmitted;
+    private Integer feedbackRating;
 
     public StudentComplaint() {
     }
@@ -157,5 +159,21 @@ public class StudentComplaint {
 
     public void setResolvedAt(String resolvedAt) {
         this.resolvedAt = resolvedAt;
+    }
+
+    public boolean isFeedbackSubmitted() {
+        return feedbackSubmitted;
+    }
+
+    public void setFeedbackSubmitted(boolean feedbackSubmitted) {
+        this.feedbackSubmitted = feedbackSubmitted;
+    }
+
+    public Integer getFeedbackRating() {
+        return feedbackRating;
+    }
+
+    public void setFeedbackRating(Integer feedbackRating) {
+        this.feedbackRating = feedbackRating;
     }
 }

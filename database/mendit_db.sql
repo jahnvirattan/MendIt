@@ -81,6 +81,7 @@ CREATE TABLE IF NOT EXISTS feedback (
     submitted_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     PRIMARY KEY (feedback_id),
+    UNIQUE (complaint_id),
 
     FOREIGN KEY (complaint_id)
         REFERENCES complaints(complaint_id)

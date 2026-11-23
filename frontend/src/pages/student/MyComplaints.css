@@ -757,3 +757,59 @@
   border-radius: 12px;
   object-fit: contain;
 }
+.timeline-section {
+  min-width: 0;
+}
+
+.complaint-timeline {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  margin-top: 16px;
+  padding: 0 0 8px;
+  overflow-x: auto;
+}
+
+.timeline-step {
+  position: relative;
+  display: flex;
+  flex: 1 0 112px;
+  min-width: 112px;
+  min-height: 0;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.timeline-step:not(:last-child)::after {
+  position: absolute;
+  top: 8px;
+  right: auto;
+  bottom: auto;
+  left: calc(50% + 9px);
+  width: calc(100% - 18px);
+  height: 2px;
+  background: #e9dfc9;
+  content: "";
+}
+
+.timeline-done:not(:last-child)::after {
+  background: #247451;
+}
+
+.timeline-marker {
+  position: relative;
+  z-index: 1;
+}
+
+.timeline-copy {
+  align-items: center;
+  min-width: 0;
+  padding-bottom: 0;
+}
+
+.timeline-copy strong,
+.timeline-copy span {
+  line-height: 1.4;
+}

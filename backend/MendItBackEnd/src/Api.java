@@ -152,6 +152,12 @@ public class Api implements HttpHandler {
             studentComplaintHandler.handleStudentComplaints(exchange);
             return;
         }
+        if (method.equalsIgnoreCase("POST")
+                && path.equals("/api/student/feedback")) {
+
+            studentComplaintHandler.handleFeedbackSubmit(exchange);
+            return;
+        }
 
         // ADMIN DASHBOARD STATISTICS
         if (method.equalsIgnoreCase("GET")

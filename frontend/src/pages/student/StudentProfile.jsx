@@ -266,13 +266,12 @@ function StudentProfile() {
           <p className="profile-summary-department">
             {profile?.department || "Department not added"}
           </p>
+          <span className="profile-summary-badge">
+            <i className="fa-solid fa-user-graduate" aria-hidden="true"> </i>
+            Student Account
+          </span>
 
           <div className="profile-summary-divider"></div>
-
-          <p className="profile-summary-label">Member since</p>
-          <p className="profile-summary-date">
-            {formatDate(profile?.created_at)}
-          </p>
         </aside>
 
         <section className="profile-details-card">

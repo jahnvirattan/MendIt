@@ -12,15 +12,18 @@ public class StudentComplaintHistory {
 
         List<StudentComplaint> complaints = new ArrayList<>();
 
-        String sql = """
-                SELECT complaint_id, student_id, title, description,
-                       category, building, floor, room_or_area,
-                       photo_path, priority, status, admin_note,
-                       submitted_at, updated_at, resolved_at
-                FROM complaints
-                WHERE student_id = ?
-                ORDER BY submitted_at DESC
-                """;
+       String sql = """
+        SELECT c.complaint_id, c.student_id, c.title, c.description,
+               c.category, c.building, c.floor, c.room_or_area,
+               c.photo_path, c.priority, c.status, c.admin_note,
+               c.submitted_at, c.updated_at, c.resolved_at,
+               (f.feedback_id IS NOT NULL) AS feedback_submitted,
+               f.rating AS feedback_rating
+               FROM complaints c
+               LEFT JOIN feedback f ON f.complaint_id = c.complaint_id
+               WHERE c.student_id = ?
+               ORDER BY c.submitted_at DESC
+               """;
 
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement statement =
@@ -44,12 +47,15 @@ public class StudentComplaintHistory {
     ) throws SQLException {
 
         String sql = """
-                SELECT complaint_id, student_id, title, description,
-                       category, building, floor, room_or_area,
-                       photo_path, priority, status, admin_note,
-                       submitted_at, updated_at, resolved_at
-                FROM complaints
-                WHERE student_id = ? AND complaint_id = ?
+        SELECT c.complaint_id, c.student_id, c.title, c.description,
+               c.category, c.building, c.floor, c.room_or_area,
+               c.photo_path, c.priority, c.status, c.admin_note,
+               c.submitted_at, c.updated_at, c.resolved_at,
+               (f.feedback_id IS NOT NULL) AS feedback_submitted,
+               f.rating AS feedback_rating
+                FROM complaints c
+                LEFT JOIN feedback f ON f.complaint_id = c.complaint_id
+                WHERE c.student_id = ? AND c.complaint_id = ?
                 """;
 
         try (Connection connection = DBConnection.getConnection();
@@ -89,6 +95,14 @@ public class StudentComplaintHistory {
         complaint.setSubmittedAt(result.getString("submitted_at"));
         complaint.setUpdatedAt(result.getString("updated_at"));
         complaint.setResolvedAt(result.getString("resolved_at"));
+        complaint.setFeedbackSubmitted(
+                result.getBoolean("feedback_submitted")
+        );
+
+        int feedbackRating = result.getInt("feedback_rating");
+        complaint.setFeedbackRating(
+                result.wasNull() ? null : feedbackRating
+        );
 
         return complaint;
     }

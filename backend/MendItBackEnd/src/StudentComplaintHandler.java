@@ -13,6 +13,8 @@ public class StudentComplaintHandler {
     private final ComplaintSubmissionDAO submissionDAO =
             new ComplaintSubmissionDAO();
 
+    private final FeedbackDAO feedbackDAO = new FeedbackDAO();
+
     private final StudentComplaintHistory complaintHistory =
             new StudentComplaintHistory();
 
@@ -204,6 +206,95 @@ public class StudentComplaintHandler {
             ));
         }
     }
+    public void handleFeedbackSubmit(HttpExchange exchange)
+        throws IOException {
+
+        if (!exchange.getRequestMethod().equalsIgnoreCase("POST")) {
+                sendResponse(exchange, 405, Map.of(
+                        "success", false,
+                        "message", "Method not allowed."
+                ));
+                return;
+        }
+
+        Map<String, Object> request;
+
+        try {
+                request = mapper.readValue(
+                        exchange.getRequestBody(),
+                        new TypeReference<Map<String, Object>>() {}
+                );
+        } catch (IOException e) {
+                sendResponse(exchange, 400, Map.of(
+                        "success", false,
+                        "message", "Invalid JSON request."
+                ));
+                return;
+        }
+
+        try {
+                int studentId = Integer.parseInt(
+                        String.valueOf(request.get("studentId"))
+                );
+
+                int complaintId = Integer.parseInt(
+                        String.valueOf(request.get("complaintId"))
+                );
+
+                int rating = Integer.parseInt(
+                        String.valueOf(request.get("rating"))
+                );
+
+                String comments = getText(request, "comments");
+
+                if (studentId <= 0
+                        || complaintId <= 0
+                        || rating < 1
+                        || rating > 5
+                        || comments.length() > 500) {
+                sendResponse(exchange, 400, Map.of(
+                        "success", false,
+                        "message", "Please provide valid feedback details."
+                ));
+                return;
+                }
+
+                boolean saved = feedbackDAO.saveFeedback(
+                        studentId,
+                        complaintId,
+                        rating,
+                        comments
+                );
+
+                if (!saved) {
+                sendResponse(exchange, 400, Map.of(
+                        "success", false,
+                        "message",
+                        "The complaint must belong to you, be resolved, and have no previous feedback."
+                ));
+                return;
+                }
+
+                sendResponse(exchange, 201, Map.of(
+                        "success", true,
+                        "message", "Feedback submitted successfully."
+                ));
+
+        } catch (NumberFormatException e) {
+                sendResponse(exchange, 400, Map.of(
+                        "success", false,
+                        "message",
+                        "Student ID, complaint ID, and rating must be numbers."
+                ));
+
+        } catch (SQLException e) {
+                e.printStackTrace();
+                sendResponse(exchange, 500, Map.of(
+                        "success", false,
+                        "message", "Unable to save feedback."
+                ));
+        }
+        }
 
     private String getText(
             Map<String, Object> request,
