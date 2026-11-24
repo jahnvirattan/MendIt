@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./ComplaintDetails.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
@@ -15,6 +15,39 @@ console.log("COMPLETE COMPLAINT DATA:", complaint);
   const [adminNote, setAdminNote] = useState(complaint?.admin_note || "");
 
   const [saving, setSaving] = useState(false);
+  const [feedback, setFeedback] = useState(null);
+const [feedbackLoading, setFeedbackLoading] = useState(true);
+const [feedbackError, setFeedbackError] = useState("");
+
+useEffect(() => {
+  const fetchFeedback = async () => {
+    try {
+      setFeedbackLoading(true);
+      setFeedbackError("");
+
+      const response = await fetch(
+        `http://localhost:8080/api/admin/complaints/feedback?complaintId=${complaint.complaint_id}`
+      );
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.message || "Unable to fetch feedback.");
+      }
+
+      setFeedback(result.data);
+    } catch (error) {
+      console.error("Error fetching feedback:", error);
+      setFeedbackError(error.message);
+    } finally {
+      setFeedbackLoading(false);
+    }
+  };
+
+  if (complaint?.complaint_id) {
+    fetchFeedback();
+  }
+}, [complaint?.complaint_id]);
 
   if (!complaint) {
     return (
@@ -226,6 +259,44 @@ console.log("COMPLETE COMPLAINT DATA:", complaint);
                 />
               </div>
             )}
+
+<div className="student-feedback-section">
+  <div className="details-divider"></div>
+
+  <h3>Student Feedback</h3>
+
+  {feedbackLoading ? (
+    <p>Loading student feedback...</p>
+  ) : feedbackError ? (
+    <p>{feedbackError}</p>
+  ) : feedback ? (
+    <div className="feedback-content">
+      <div className="feedback-rating">
+        <span>Rating</span>
+        <strong>
+          {"★".repeat(feedback.rating)}
+          {"☆".repeat(5 - feedback.rating)}
+        </strong>
+        <span>{feedback.rating}/5</span>
+      </div>
+
+      <div className="feedback-comment">
+        <span>Student Comment</span>
+        <p>
+          {feedback.comments?.trim() || "No written comment provided."}
+        </p>
+      </div>
+
+      <div className="feedback-date">
+        <span>Feedback Submitted On </span>
+        <strong>{feedback.submittedAt}</strong>
+      </div>
+    </div>
+  ) : (
+    <p>No feedback submitted by the student yet.</p>
+  )}
+</div>
+
           </section>
 
           <aside className="update-card">

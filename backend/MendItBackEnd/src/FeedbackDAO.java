@@ -1,6 +1,8 @@
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FeedbackDAO {
 
@@ -8,8 +10,7 @@ public class FeedbackDAO {
             int studentId,
             int complaintId,
             int rating,
-            String comments
-    ) throws SQLException {
+            String comments) throws SQLException {
 
         String sql = """
                 INSERT INTO feedback (complaint_id, rating, comments)
@@ -26,8 +27,7 @@ public class FeedbackDAO {
                 """;
 
         try (Connection connection = DBConnection.getConnection();
-             PreparedStatement statement =
-                     connection.prepareStatement(sql)) {
+                PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setInt(1, rating);
             statement.setString(2, comments);
@@ -37,4 +37,39 @@ public class FeedbackDAO {
             return statement.executeUpdate() == 1;
         }
     }
+
+    public Map<String, Object> getFeedbackByComplaintId(int complaintId)
+            throws SQLException {
+
+        String sql = """
+                SELECT feedback_id, complaint_id, rating, comments, submitted_at
+                FROM feedback
+                WHERE complaint_id = ?
+                """;
+
+        try (Connection connection = DBConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setInt(1, complaintId);
+
+            try (var rs = statement.executeQuery()) {
+
+                if (rs.next()) {
+                    Map<String, Object> feedback = new HashMap<>();
+
+                    feedback.put("feedbackId", rs.getInt("feedback_id"));
+                    feedback.put("complaintId", rs.getInt("complaint_id"));
+                    feedback.put("rating", rs.getInt("rating"));
+                    feedback.put("comments", rs.getString("comments"));
+                    feedback.put("submittedAt",
+                            rs.getTimestamp("submitted_at").toString());
+
+                    return feedback;
+                }
+            }
+        }
+
+        return null;
+    }
+
 }

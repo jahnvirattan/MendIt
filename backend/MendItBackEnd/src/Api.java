@@ -37,6 +37,7 @@ public class Api implements HttpHandler {
 
     // Admin profile
     private final AdminProfileHandler adminProfileHandler = new AdminProfileHandler();
+    private final FeedbackDAO feedbackDAO = new FeedbackDAO();
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
@@ -234,6 +235,39 @@ public class Api implements HttpHandler {
 
                 sendJson(exchange, 200, response);
 
+            } catch (SQLException e) {
+                e.printStackTrace();
+                sendError(exchange);
+            }
+
+            return;
+        }
+        // ADMIN - GET FEEDBACK FOR A COMPLAINT
+        if (method.equalsIgnoreCase("GET")
+                && path.equals("/api/admin/complaints/feedback")) {
+
+            try {
+                String query = exchange.getRequestURI().getQuery();
+
+                if (query == null || !query.startsWith("complaintId=")) {
+                    sendResponse(exchange, 400,
+                            "{\"success\":false,\"message\":\"Complaint ID is required.\"}");
+                    return;
+                }
+
+                int complaintId = Integer.parseInt(
+                        query.substring("complaintId=".length()));
+
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", true);
+                response.put("data",
+                        feedbackDAO.getFeedbackByComplaintId(complaintId));
+
+                sendJson(exchange, 200, response);
+
+            } catch (NumberFormatException e) {
+                sendResponse(exchange, 400,
+                        "{\"success\":false,\"message\":\"Invalid complaint ID.\"}");
             } catch (SQLException e) {
                 e.printStackTrace();
                 sendError(exchange);
