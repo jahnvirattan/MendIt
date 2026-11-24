@@ -50,6 +50,7 @@ function AllComplaints() {
           admin_note: complaint.adminNote,
           floor: complaint.floor,
           photo_path: complaint.photo_path,
+          submitted_at: complaint.submitted_at,
         }));
 
         setComplaints(formattedComplaints);

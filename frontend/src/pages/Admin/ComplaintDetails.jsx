@@ -9,7 +9,7 @@ function ComplaintDetails() {
   const navigate = useNavigate();
 
   const complaint = location.state?.complaint;
-
+console.log("COMPLETE COMPLAINT DATA:", complaint);
   const [status, setStatus] = useState(complaint?.status || "SUBMITTED");
   const [priority, setPriority] = useState(complaint?.priority || "MEDIUM");
   const [adminNote, setAdminNote] = useState(complaint?.admin_note || "");
