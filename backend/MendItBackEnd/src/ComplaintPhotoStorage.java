@@ -11,6 +11,8 @@ public class ComplaintPhotoStorage {
 
     private static final Path UPLOAD_DIRECTORY = Path.of(
             System.getProperty("user.dir"),
+            "backend",
+            "MendItBackEnd",
             "uploads",
             "complaints").toAbsolutePath().normalize();
 

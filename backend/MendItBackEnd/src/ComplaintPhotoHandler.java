@@ -13,6 +13,8 @@ public class ComplaintPhotoHandler implements HttpHandler {
     private static final String URL_PREFIX = "/uploads/complaints/";
     private static final Path UPLOAD_DIRECTORY = Path.of(
             System.getProperty("user.dir"),
+            "backend",
+            "MendItBackEnd",
             "uploads",
             "complaints").toAbsolutePath().normalize();
 

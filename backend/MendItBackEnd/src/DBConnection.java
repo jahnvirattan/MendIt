@@ -8,7 +8,7 @@ public class DBConnection {
 
     // Load .env from the parent folder of src
     private static final Dotenv dotenv = Dotenv.configure()
-            .directory(".")
+            .directory("backend/MendItBackEnd")
             .ignoreIfMissing()
             .load();
 
