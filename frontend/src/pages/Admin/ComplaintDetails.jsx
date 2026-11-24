@@ -1,73 +1,129 @@
 
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import "./ComplaintDetails.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
 function ComplaintDetails() {
-  const location = useLocation();
+  const { id } = useParams();
   const navigate = useNavigate();
 
-  const complaint = location.state?.complaint;
-console.log("COMPLETE COMPLAINT DATA:", complaint);
-  const [status, setStatus] = useState(complaint?.status || "SUBMITTED");
-  const [priority, setPriority] = useState(complaint?.priority || "MEDIUM");
-  const [adminNote, setAdminNote] = useState(complaint?.admin_note || "");
+  const [complaint, setComplaint] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
+
+  const [status, setStatus] = useState("SUBMITTED");
+  const [priority, setPriority] = useState("MEDIUM");
+  const [adminNote, setAdminNote] = useState("");
 
   const [saving, setSaving] = useState(false);
+
   const [feedback, setFeedback] = useState(null);
-const [feedbackLoading, setFeedbackLoading] = useState(true);
-const [feedbackError, setFeedbackError] = useState("");
+  const [feedbackLoading, setFeedbackLoading] = useState(true);
+  const [feedbackError, setFeedbackError] = useState("");
 
-useEffect(() => {
-  const fetchFeedback = async () => {
-    try {
-      setFeedbackLoading(true);
-      setFeedbackError("");
+  // Fetch the complete complaint using its ID from the URL
+  useEffect(() => {
+    const fetchComplaint = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:8080/api/admin/complaints"
+        );
 
-      const response = await fetch(
-        `http://localhost:8080/api/admin/complaints/feedback?complaintId=${complaint.complaint_id}`
-      );
+        const result = await response.json();
 
-      const result = await response.json();
+        if (!response.ok || !result.success) {
+          throw new Error(
+            result.message || "Unable to fetch complaints."
+          );
+        }
 
-      if (!response.ok || !result.success) {
-        throw new Error(result.message || "Unable to fetch feedback.");
+        // Remove MD prefix if the URL contains an ID like MD12
+        const requestedId = String(id).replace(/^MD/i, "");
+
+        const foundComplaint = result.data.find(
+          (item) => String(item.complaintId) === requestedId
+        );
+
+        if (!foundComplaint) {
+          throw new Error("Complaint not found.");
+        }
+
+        // Convert backend field names into frontend field names
+        const mappedComplaint = {
+          complaint_id: foundComplaint.complaintId,
+          student_id: foundComplaint.studentId,
+          student_name: foundComplaint.studentName || "Unknown Student",
+          title: foundComplaint.title,
+          description: foundComplaint.description,
+          category: foundComplaint.category,
+          building: foundComplaint.building,
+          room_or_area: foundComplaint.room,
+          priority: foundComplaint.priority || "MEDIUM",
+          status: foundComplaint.status || "SUBMITTED",
+          admin_note: foundComplaint.adminNote || "",
+          floor: foundComplaint.floor,
+          photo_path: foundComplaint.photo_path,
+          submitted_at: foundComplaint.submitted_at,
+        };
+
+        setComplaint(mappedComplaint);
+
+        // Initialize the form values when the complaint is fetched
+        setStatus(mappedComplaint.status);
+        setPriority(mappedComplaint.priority);
+        setAdminNote(mappedComplaint.admin_note);
+      } catch (error) {
+        console.error("Error fetching complaint:", error);
+        setLoadError(error.message || "Unable to load complaint.");
+      } finally {
+        setLoading(false);
       }
+    };
 
-      setFeedback(result.data);
-    } catch (error) {
-      console.error("Error fetching feedback:", error);
-      setFeedbackError(error.message);
-    } finally {
-      setFeedbackLoading(false);
+    fetchComplaint();
+  }, [id]);
+
+  // Fetch feedback after the complaint has loaded
+  useEffect(() => {
+    if (!complaint?.complaint_id) {
+      return;
     }
+
+    const fetchFeedback = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8080/api/admin/complaints/feedback?complaintId=${complaint.complaint_id}`
+        );
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+          throw new Error(
+            result.message || "Unable to fetch feedback."
+          );
+        }
+
+        setFeedback(result.data);
+      } catch (error) {
+        console.error("Error fetching feedback:", error);
+        setFeedbackError(error.message || "Unable to fetch feedback.");
+      } finally {
+        setFeedbackLoading(false);
+      }
+    };
+
+    fetchFeedback();
+  }, [complaint?.complaint_id]);
+
+  const formatStatus = (value) => {
+    return String(value || "SUBMITTED")
+      .replaceAll("_", " ")
+      .toLowerCase()
+      .replace(/\b\w/g, (letter) => letter.toUpperCase());
   };
 
-  if (complaint?.complaint_id) {
-    fetchFeedback();
-  }
-}, [complaint?.complaint_id]);
-
-  if (!complaint) {
-    return (
-      <div className="details-page">
-        <div className="details-not-found">
-          <h2>Complaint not found</h2>
-          <p>Please open a complaint from the All Complaints page.</p>
-          <button onClick={() => navigate("/admin/complaints")}>
-            Back to All Complaints
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  const formatStatus = (value) =>
-    value.replaceAll("_", " ").toLowerCase().replace(/\b\w/g, (letter) =>
-      letter.toUpperCase()
-    );
-
+  // Save status, priority and admin remarks
   const handleSave = async (event) => {
     event.preventDefault();
 
@@ -92,7 +148,9 @@ useEffect(() => {
       const statusResult = await statusResponse.json();
 
       if (!statusResponse.ok || !statusResult.success) {
-        throw new Error(statusResult.message || "Status update failed.");
+        throw new Error(
+          statusResult.message || "Status update failed."
+        );
       }
 
       // 2. Update complaint priority
@@ -113,10 +171,12 @@ useEffect(() => {
       const priorityResult = await priorityResponse.json();
 
       if (!priorityResponse.ok || !priorityResult.success) {
-        throw new Error(priorityResult.message || "Priority update failed.");
+        throw new Error(
+          priorityResult.message || "Priority update failed."
+        );
       }
 
-      // 3. Save admin note
+      // 3. Save admin remarks
       const noteResponse = await fetch(
         "http://localhost:8080/api/admin/complaints/note",
         {
@@ -134,10 +194,12 @@ useEffect(() => {
       const noteResult = await noteResponse.json();
 
       if (!noteResponse.ok || !noteResult.success) {
-        throw new Error(noteResult.message || "Admin note update failed.");
+        throw new Error(
+          noteResult.message || "Admin note update failed."
+        );
       }
 
-      // Update the complaint object for navigation state
+      // Update the complaint data for navigation
       const updatedComplaint = {
         ...complaint,
         status: status,
@@ -150,19 +212,50 @@ useEffect(() => {
       navigate("/admin/complaints", {
         state: { updatedComplaint },
       });
-
     } catch (error) {
       console.error("Error updating complaint:", error);
-      alert(error.message || "Something went wrong while saving changes.");
+
+      alert(
+        error.message || "Something went wrong while saving changes."
+      );
     } finally {
       setSaving(false);
     }
   };
 
+  // Loading screen
+  if (loading) {
+    return (
+      <div className="details-page">
+        <div className="details-not-found">
+          <h2>Loading complaint...</h2>
+        </div>
+      </div>
+    );
+  }
+
+  // Complaint not found or loading failed
+  if (!complaint) {
+    return (
+      <div className="details-page">
+        <div className="details-not-found">
+          <h2>Complaint not found</h2>
+          <p>
+            {loadError ||
+              "Please open a complaint from the All Complaints page."}
+          </p>
+
+          <button onClick={() => navigate("/admin/complaints")}>
+            Back to All Complaints
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="details-page">
       <div className="details-container">
-
         <button
           className="back-button"
           onClick={() => navigate("/admin/complaints")}
@@ -183,7 +276,6 @@ useEffect(() => {
         </header>
 
         <div className="details-layout">
-
           <section className="details-card">
             <div className="details-card-heading">
               <div>
@@ -191,7 +283,9 @@ useEffect(() => {
                 <p>Submitted by {complaint.student_name}</p>
               </div>
 
-              <span className={`status-badge status-${status.toLowerCase()}`}>
+              <span
+                className={`status-badge status-${status.toLowerCase()}`}
+              >
                 {formatStatus(status)}
               </span>
             </div>
@@ -228,12 +322,14 @@ useEffect(() => {
 
               <div className="info-item">
                 <span>Room / Area</span>
-                <strong>{complaint.room_or_area}</strong>
+                <strong>{complaint.room_or_area || "Not specified"}</strong>
               </div>
 
               <div className="info-item">
                 <span>Submitted On</span>
-                <strong>{complaint.submitted_at || "Not available"}</strong>
+                <strong>
+                  {complaint.submitted_at || "Not available"}
+                </strong>
               </div>
 
               <div className="info-item">
@@ -245,6 +341,7 @@ useEffect(() => {
             <div className="details-divider"></div>
 
             <h3>Problem Description</h3>
+
             <p className="complaint-description">
               {complaint.description || "No description provided."}
             </p>
@@ -252,6 +349,7 @@ useEffect(() => {
             {complaint.photo_path && (
               <div className="complaint-photo-section">
                 <h3>Attached Photo</h3>
+
                 <img
                   src={`http://localhost:8080/${complaint.photo_path}`}
                   alt="Complaint attachment"
@@ -260,48 +358,61 @@ useEffect(() => {
               </div>
             )}
 
-<div className="student-feedback-section">
-  <div className="details-divider"></div>
+            <div className="student-feedback-section">
+              <div className="details-divider"></div>
 
-  <h3>Student Feedback</h3>
+              <h3>Student Feedback</h3>
 
-  {feedbackLoading ? (
-    <p>Loading student feedback...</p>
-  ) : feedbackError ? (
-    <p>{feedbackError}</p>
-  ) : feedback ? (
-    <div className="feedback-content">
-      <div className="feedback-rating">
-        <span>Rating</span>
-        <strong>
-          {"★".repeat(feedback.rating)}
-          {"☆".repeat(5 - feedback.rating)}
-        </strong>
-        <span>{feedback.rating}/5</span>
-      </div>
+              {feedbackLoading ? (
+                <p>Loading student feedback...</p>
+              ) : feedbackError ? (
+                <p>{feedbackError}</p>
+              ) : feedback ? (
+                <div className="feedback-content">
+                  <div className="feedback-rating">
+                    <span>Rating</span>
 
-      <div className="feedback-comment">
-        <span>Student Comment</span>
-        <p>
-          {feedback.comments?.trim() || "No written comment provided."}
-        </p>
-      </div>
+                    <strong>
+                      {"★".repeat(
+                        Math.max(0, Math.min(5, Number(feedback.rating) || 0))
+                      )}
+                      {"☆".repeat(
+                        5 -
+                          Math.max(
+                            0,
+                            Math.min(5, Number(feedback.rating) || 0)
+                          )
+                      )}
+                    </strong>
 
-      <div className="feedback-date">
-        <span>Feedback Submitted On </span>
-        <strong>{feedback.submittedAt}</strong>
-      </div>
-    </div>
-  ) : (
-    <p>No feedback submitted by the student yet.</p>
-  )}
-</div>
+                    <span>{feedback.rating}/5</span>
+                  </div>
 
+                  <div className="feedback-comment">
+                    <span>Student Comment</span>
+                    <p>
+                      {feedback.comments?.trim() ||
+                        "No written comment provided."}
+                    </p>
+                  </div>
+
+                  <div className="feedback-date">
+                    <span>Feedback Submitted On</span>
+                    <strong>
+                      {feedback.submittedAt || "Not available"}
+                    </strong>
+                  </div>
+                </div>
+              ) : (
+                <p>No feedback submitted by the student yet.</p>
+              )}
+            </div>
           </section>
 
           <aside className="update-card">
             <div className="update-card-heading">
               <span className="update-icon">⚙</span>
+
               <div>
                 <h2>Manage Complaint</h2>
                 <p>Update complaint progress.</p>
@@ -364,7 +475,10 @@ useEffect(() => {
                 disabled={saving}
               >
                 {saving ? "Saving..." : "Save Changes"}
-                {!saving && <i className="fa-solid fa-arrow-right"></i>}
+
+                {!saving && (
+                  <i className="fa-solid fa-arrow-right"></i>
+                )}
               </button>
             </form>
 
@@ -372,7 +486,6 @@ useEffect(() => {
               Your changes are saved to the MendIt database.
             </p>
           </aside>
-
         </div>
       </div>
     </div>

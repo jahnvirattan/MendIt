@@ -386,12 +386,18 @@ function AdminDashboard() {
                     </td>
 
                     <td>
-                      <Link
-                        to={`/admin/complaints/${complaint.id}`}
-                        className="admin-view-link"
-                      >
-                        View →
-                      </Link>
+                        <Link
+                          to={`/admin/complaints/${complaint.id}`}
+                          state={{
+                            complaint: {
+                              ...complaint,
+                              complaint_id: complaint.id,
+                            },
+                          }}
+                          className="admin-view-link"
+                        >
+                          View →
+                        </Link>
                     </td>
                   </tr>
                 ))}
